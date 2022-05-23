@@ -6,11 +6,16 @@ plugins {
 	kotlin("jvm") version "1.6.21"
 	kotlin("plugin.spring") version "1.6.21"
 	kotlin("plugin.jpa") version "1.6.21"
+	kotlin("kapt") version "1.6.10"
 }
 
 group = "zzigmug"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
+
+sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
+	kotlin.srcDir("$buildDir/generated/source/kapt/main")
+}
 
 configurations {
 	compileOnly {
@@ -23,6 +28,9 @@ repositories {
 }
 
 dependencies {
+	implementation("com.querydsl:querydsl-jpa:5.0.0")
+	kapt("com.querydsl:querydsl-apt:5.0.0:jpa")
+
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
