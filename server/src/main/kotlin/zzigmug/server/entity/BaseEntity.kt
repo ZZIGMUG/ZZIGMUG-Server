@@ -34,5 +34,4 @@ abstract class BaseEntity {
         return result * prime + (id?.hashCode() ?: 43)
     }
 
-
 }

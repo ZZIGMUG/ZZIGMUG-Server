@@ -20,12 +20,6 @@ class SecurityConfig(
     private val jwtTokenProvider: JwtTokenProvider,
 ): WebSecurityConfigurerAdapter() {
 
-    companion object {
-        val EXCLUDED_PATHS = arrayOf(
-            "",
-        )
-    }
-
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
         http
@@ -40,13 +34,15 @@ class SecurityConfig(
             .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
             .and()
             .formLogin().disable()
             .httpBasic().disable()
+
             .authorizeRequests()
-            .antMatchers(*EXCLUDED_PATHS).permitAll()
             .antMatchers("/**")
-            .access("hasRole('ROLE_USER')")
+            .permitAll()
+
             .and()
             .apply(JwtSecurityConfig(jwtTokenProvider))
     }

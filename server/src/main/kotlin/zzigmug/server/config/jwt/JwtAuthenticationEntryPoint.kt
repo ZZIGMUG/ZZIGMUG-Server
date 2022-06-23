@@ -3,10 +3,13 @@ package zzigmug.server.config.jwt
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.AuthenticationEntryPoint
+import org.springframework.stereotype.Component
+import zzigmug.server.utils.exception.ErrorCode
 import java.io.IOException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
+@Component
 class JwtAuthenticationEntryPoint: AuthenticationEntryPoint {
 
     @Throws(IOException::class)
@@ -17,7 +20,7 @@ class JwtAuthenticationEntryPoint: AuthenticationEntryPoint {
     ) {
         val objectMapper = ObjectMapper()
         response.contentType = "application/json"
-        val jsonString = objectMapper.writeValueAsString(ApiResultCode(TOKEN_INVALID))
+        val jsonString = objectMapper.writeValueAsString(ErrorCode.TOKEN_INVALID)
         response.writer.print(jsonString)
         response.writer.flush()
     }

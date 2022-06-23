@@ -6,23 +6,32 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Component
+import zzigmug.server.data.property.JwtProperty
 import java.time.Duration
 import java.util.*
+import javax.annotation.PostConstruct
 import javax.servlet.http.HttpServletRequest
 
 @Component
 class JwtTokenProvider(
-    @Value("\${jwt.secret}")
-    val secret: String,
-    @Value("\${jwt.refresh}")
-    val refresh: String,
+    private val jwtProperty: JwtProperty,
+    private val userDetailsService: UserDetailsService
 ) {
     // TODO: private val 보다 더 좋은 게 있는지 찾아보기
     private val ONE_DAY: Long = 1000 * 60 * 60 * 24
     private val ONE_WEEK: Long = ONE_DAY * 7
 
+    private var secret: String = ""
+    private var refresh: String = ""
     private val LOG: Logger = LoggerFactory.getLogger(JwtTokenProvider::class.java)
+
+    @PostConstruct
+    fun init() {
+        secret = Base64.getEncoder().encodeToString(jwtProperty.secret.toByteArray())
+        refresh = Base64.getEncoder().encodeToString(jwtProperty.refresh.toByteArray())
+    }
 
     fun getAccessToken(username: String, roles: Array<String>): String {
         return generate(username, ONE_DAY * 30, roles, secret)
@@ -34,7 +43,6 @@ class JwtTokenProvider(
 
     private fun generate(username: String, expirationInMillis: Long, roles: Array<String>, signature: String): String {
         val now = Date()
-        val validity = Date(getExpiration(expirationInMillis))
         val claims = Jwts.claims().setSubject(username)
         claims.put("roles", roles)
 
@@ -42,7 +50,7 @@ class JwtTokenProvider(
             .setIssuer("zzigmug")
             .setClaims(claims)
             .setIssuedAt(now)
-            .setExpiration(validity)
+            .setExpiration(Date(now.time + expirationInMillis))
             .signWith(SignatureAlgorithm.HS256, signature)
             .compact()
     }
@@ -58,10 +66,6 @@ class JwtTokenProvider(
 
     fun getUsername(token: String): String {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).body.subject
-    }
-
-    fun resolveToken(request: HttpServletRequest): String? {
-        return request.getHeader("Authorization")
     }
 
     fun validateToken(token: String): Boolean {
