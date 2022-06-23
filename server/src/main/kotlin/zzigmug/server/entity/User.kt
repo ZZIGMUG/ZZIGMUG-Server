@@ -34,31 +34,31 @@ class User (
     @Column
     var exp: Long,
 ): BaseEntity(), UserDetails {
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        TODO("Not yet implemented")
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority>? {
+        return null
     }
 
-    override fun getPassword(): String {
-        TODO("Not yet implemented")
+    override fun getPassword(): String? {
+        return null
     }
 
     override fun getUsername(): String {
-        TODO("Not yet implemented")
+        return this.email
     }
 
     override fun isAccountNonExpired(): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     override fun isAccountNonLocked(): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     override fun isCredentialsNonExpired(): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     override fun isEnabled(): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 }
