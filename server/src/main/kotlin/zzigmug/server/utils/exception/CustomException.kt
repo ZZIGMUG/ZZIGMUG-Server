@@ -1,4 +1,9 @@
 package zzigmug.server.utils.exception
 
-class CustomException {
+import java.lang.RuntimeException
+
+class CustomException(
+    val errorCode: ResponseCode
+): RuntimeException() {
+
 }
