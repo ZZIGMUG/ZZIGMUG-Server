@@ -2,38 +2,44 @@ package zzigmug.server.entity
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import zzigmug.server.data.LoginType
+import zzigmug.server.data.RoleType
 import javax.persistence.Column
 import javax.persistence.Entity
 
 @Entity
 class User (
     @Column
-    var nickname: String,
+    var nickname: String? = null,
 
     @Column
     var email: String,
 
     @Column
-    var height: Long,
+    var height: Long? = null,
 
     @Column
-    var weight: Long,
+    var weight: Long? = null,
 
     @Column
-    var goal: Long,
+    var goal: Long? = null,
 
     @Column
     var gender: Boolean? = null,
 
     @Column
-    var agree_marketing: Boolean,
+    var agree_marketing: Boolean? = null,
 
     @Column
-    var status: String,
+    var exp: Long? = null,
 
     @Column
-    var exp: Long,
-): BaseEntity(), UserDetails {
+    var role: RoleType,
+
+    @Column
+    var loginType: LoginType,
+
+    ): BaseEntity(), UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority>? {
         return null
     }

@@ -34,7 +34,7 @@ class KakaoOAuth2(
         val httpEntity = HttpEntity<MultiValueMap<String, String>>(params, headers)
 
         val response = restTemplate.exchange(
-            "https://kauth/kakao.com/oauth/token",
+            "https://kauth.kakao.com/oauth/token",
             HttpMethod.POST,
             httpEntity,
             String::class.java
@@ -60,7 +60,6 @@ class KakaoOAuth2(
         val body = JSONObject(response.body)
         val id = body.getLong("id")
         val email = body.getJSONObject("kakao_account").getString("email")
-        //val nickname = body.getJSONObject("properties").getString("nickname")
 
         return KakaoUserInfo(id, email)
     }
@@ -68,5 +67,5 @@ class KakaoOAuth2(
 
 data class KakaoUserInfo(
     val id: Long,
-    val email: String? = null,
+    val email: String,
 )

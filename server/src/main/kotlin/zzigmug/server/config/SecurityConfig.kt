@@ -8,10 +8,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
-import zzigmug.server.config.jwt.JwtAccessDeniedHandler
-import zzigmug.server.config.jwt.JwtAuthenticationEntryPoint
-import zzigmug.server.config.jwt.JwtSecurityConfig
-import zzigmug.server.config.jwt.JwtTokenProvider
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import zzigmug.server.config.jwt.*
 
 @Configurable
 @EnableWebSecurity
@@ -46,13 +44,15 @@ class SecurityConfig(
             .and()
             .formLogin().disable()
             .httpBasic().disable()
-
-            .authorizeRequests()
-            .antMatchers("/**")
-            .permitAll()
+            .headers().frameOptions().disable()
 
             .and()
-            .apply(JwtSecurityConfig(jwtTokenProvider))
+            .authorizeRequests()
+            .antMatchers("/h2-console/**", "/**").permitAll()
+            .anyRequest().permitAll()
+
+            .and()
+            .addFilterBefore(JwtFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter::class.java)
     }
 
     @Throws(Exception::class)
