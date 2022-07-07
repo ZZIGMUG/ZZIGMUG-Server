@@ -2,40 +2,46 @@ package zzigmug.server.entity
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import zzigmug.server.data.GenderType
 import zzigmug.server.data.LoginType
 import zzigmug.server.data.RoleType
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
 
 @Entity
 class User (
     @Column
     var nickname: String? = null,
 
-    @Column
+    @Column(unique = true)
     var email: String,
 
     @Column
-    var height: Long? = null,
+    var height: Int? = null,
 
     @Column
-    var weight: Long? = null,
+    var weight: Int? = null,
 
     @Column
-    var goal: Long? = null,
+    var goal: Int? = null,
+
+    @Enumerated(EnumType.STRING)
+    @Column
+    var gender: GenderType? = null,
 
     @Column
-    var gender: Boolean? = null,
+    var agree_marketing: Boolean = false,
 
     @Column
-    var agree_marketing: Boolean? = null,
+    var exp: Long = 0,
 
-    @Column
-    var exp: Long? = null,
-
+    @Enumerated(EnumType.STRING)
     @Column
     var role: RoleType,
 
+    @Enumerated(EnumType.STRING)
     @Column
     var loginType: LoginType,
 

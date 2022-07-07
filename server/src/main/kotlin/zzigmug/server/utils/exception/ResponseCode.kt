@@ -6,7 +6,12 @@ enum class ResponseCode(
     val httpStatus: HttpStatus,
     val message: String,
 ) {
+    OK(HttpStatus.OK, "성공"),
+
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "계정이 존재하지 않습니다."),
+
+    USER_NICKNAME_INCORRECT(HttpStatus.BAD_REQUEST, "닉네임 형식이 올바르지 않습니다."),
+    USER_NICKNAME_DUPLICATED(HttpStatus.CONFLICT, "중복된 닉네임이 이미 존재합니다."),
 
     TOKEN_INVALID_SIGNATURE(HttpStatus.NOT_FOUND, "Invalid JWT signature"),
     TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "Invalid JWT token"),
@@ -16,6 +21,6 @@ enum class ResponseCode(
 }
 
 data class ResponseMessage (
-    val message: String,
+    val status: Int,
     val data: Any
 )
