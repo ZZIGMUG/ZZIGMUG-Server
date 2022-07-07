@@ -1,6 +1,7 @@
 package zzigmug.server.service
 
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import zzigmug.server.config.jwt.JwtTokenProvider
 import zzigmug.server.data.*
 import zzigmug.server.entity.User
@@ -55,6 +56,16 @@ class AuthService (
             refreshToken = null,
             userInfo = UserInfo(user)
         )
+    }
+
+    @Transactional(readOnly = true)
+    fun validateNickname(input: String): ResponseCode {
+        val nickname = input.replace(" ", "")
+        val exp = Regex("^[가-힣ㄱ-ㅎ ㅏ-ㅣ a-zA-Z0-9 -]{2,12}\$")
+        if (!exp.matches(nickname)) return ResponseCode.USER_NICKNAME_INCORRECT
+
+        if (userRepository.existsByNickname(nickname)) return ResponseCode.USER_NICKNAME_DUPLICATED
+        return ResponseCode.OK
     }
 
     private fun createToken(email: String): String {
