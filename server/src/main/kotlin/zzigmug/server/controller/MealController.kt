@@ -7,4 +7,5 @@ import zzigmug.server.service.MealService
 class MealController(
     private val mealService: MealService,
 ) {
+    
 }
