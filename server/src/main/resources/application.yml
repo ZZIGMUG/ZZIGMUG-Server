@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://3.35.248.163:3306/zzigmug?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://127.0.0.1:3306/zzigmug?serverTimezone=Asia/Seoul
     username: zzigmug
     password: buumug1234
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -8,7 +8,7 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
 
 jwt:
   secret: zzigmug
@@ -16,4 +16,4 @@ jwt:
 
 kakao:
   rest-api-key: 1a3b9f796a1b1a0be46ea81109580295
-  redirect-uri: http://3.34.46.70:8080/login/kakao/callback
+  redirect-uri: http://localhost:8080/login/kakao/callback
