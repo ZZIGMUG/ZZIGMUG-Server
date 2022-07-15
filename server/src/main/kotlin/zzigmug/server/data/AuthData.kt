@@ -1,7 +1,5 @@
 package zzigmug.server.data
 
-import zzigmug.server.entity.User
-
 data class LoginResponseDto(
     var accessToken: String? = null,
     var refreshToken: String? = null,
