@@ -1,10 +1,8 @@
 package zzigmug.server.entity
 
+import zzigmug.server.data.FoodRequestDto
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
 
 @Entity
 class Food (
@@ -12,15 +10,23 @@ class Food (
     var name: String,
 
     @Column
-    var calories: Long,
+    var calories: Int,
 
     @Column
-    var calbo: Long,
+    var calbo: Int,
 
     @Column
-    var fat: Long,
+    var fat: Int,
 
     @Column
-    var protein: Long,
+    var protein: Int,
 
-    ): BaseEntity()
+): BaseEntity() {
+    constructor(requestDto: FoodRequestDto): this(
+        name = requestDto.name,
+        calories = requestDto.calories,
+        calbo = requestDto.calbo,
+        fat = requestDto.fat,
+        protein = requestDto.protein
+    )
+}
