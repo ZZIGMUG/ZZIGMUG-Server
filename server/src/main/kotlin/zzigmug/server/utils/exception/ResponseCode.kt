@@ -14,6 +14,8 @@ enum class ResponseCode(
     USER_NICKNAME_DUPLICATED(HttpStatus.CONFLICT, "중복된 닉네임이 이미 존재합니다."),
 
     FOOD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 음식이 존재하지 않습니다."),
+    MEAL_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 식단이 존재하지 않습니다."),
+    DISH_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 요리가 존재하지 않습니다."),
 
     TOKEN_INVALID_SIGNATURE(HttpStatus.NOT_FOUND, "Invalid JWT signature"),
     TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "Invalid JWT token"),

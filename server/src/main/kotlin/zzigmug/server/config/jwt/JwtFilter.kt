@@ -27,28 +27,8 @@ class JwtFilter(
     ) {
         val accessToken = resolveToken(request)
 
-        if (StringUtils.hasText(accessToken)) {
-            val authentication = accessToken?.let {
-                try {
-                    jwtTokenProvider.validateAccessToken(it)
-                } catch (e: SignatureException) {
-                    sendErrorResponse(response, ResponseCode.TOKEN_INVALID_SIGNATURE)
-                    return
-                } catch (e: MalformedJwtException) {
-                    sendErrorResponse(response, ResponseCode.TOKEN_INVALID)
-                    return
-                } catch (e: ExpiredJwtException) {
-                    sendErrorResponse(response, ResponseCode.TOKEN_EXPIRED)
-                    return
-                } catch (e: UnsupportedJwtException) {
-                    sendErrorResponse(response, ResponseCode.TOKEN_UNSUPPORTED)
-                    return
-                } catch (e: java.lang.IllegalArgumentException) {
-                    sendErrorResponse(response, ResponseCode.TOKEN_EMPTY)
-                    return
-                }
-                jwtTokenProvider.getAuthentication(it)
-            }
+        if (StringUtils.hasText(accessToken) && jwtTokenProvider.validateAccessToken(accessToken)) {
+            val authentication = jwtTokenProvider.getAuthentication(accessToken!!)
             SecurityContextHolder.getContext().authentication = authentication
         }
         filterChain.doFilter(request, response)
@@ -59,14 +39,5 @@ class JwtFilter(
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX))
             return bearerToken.substring(7)
         return null
-    }
-
-    private fun sendErrorResponse(response: HttpServletResponse, responseCode: ResponseCode) {
-        val objectMapper = ObjectMapper()
-        response.contentType = "application/json"
-
-        val jsonString = objectMapper.writeValueAsString(ErrorResponse.toResponseEntity(responseCode))
-        response.writer.print(jsonString)
-        response.writer.flush()
     }
 }

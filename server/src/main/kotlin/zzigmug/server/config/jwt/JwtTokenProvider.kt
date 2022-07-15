@@ -1,18 +1,14 @@
 package zzigmug.server.config.jwt
 
 import io.jsonwebtoken.*
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Component
 import zzigmug.server.data.property.JwtProperty
-import java.time.Duration
 import java.util.*
 import javax.annotation.PostConstruct
-import javax.servlet.http.HttpServletRequest
 
 @Component
 class JwtTokenProvider(
@@ -24,7 +20,7 @@ class JwtTokenProvider(
 
     private val ONE_DAY: Long = 1000 * 60 * 60 * 24
     private val ONE_WEEK: Long = ONE_DAY * 7
-
+    private val BEARER_PREFIX = "Bearer "
     private val LOG = LoggerFactory.getLogger(JwtTokenProvider::class.java)
 
     @PostConstruct
@@ -34,18 +30,18 @@ class JwtTokenProvider(
     }
 
     fun getAccessToken(username: String, roles: Array<String>): String {
-        return generate(username, ONE_DAY * 180, roles, secretKey)
+        return BEARER_PREFIX + generate(username, ONE_DAY * 180, roles, secretKey)
     }
 
-    fun validateAccessToken(accessToken: String): Boolean {
+    fun validateAccessToken(accessToken: String?): Boolean {
         return validate(secretKey, accessToken)
     }
 
     fun getRefreshToken(username: String, roles: Array<String>): String {
-        return generate(username, ONE_DAY * 180, roles, refreshKey)
+        return BEARER_PREFIX + generate(username, ONE_DAY * 180, roles, refreshKey)
     }
 
-    fun validateRefreshToken(refreshToken: String): Boolean {
+    fun validateRefreshToken(refreshToken: String?): Boolean {
         return validate(refreshKey, refreshToken)
     }
 
@@ -62,17 +58,30 @@ class JwtTokenProvider(
             .compact()
     }
 
-    fun validate(signature: String, token: String): Boolean {
-        val claims = Jwts.parser().setSigningKey(signature).parseClaimsJws(token)
-        return true
+    fun validate(signature: String, token: String?): Boolean {
+        try {
+            Jwts.parser().setSigningKey(signature).parseClaimsJws(token)
+            return true
+        } catch (e: SignatureException) {
+            LOG.error("Invalid JWT signature")
+        } catch (e: MalformedJwtException) {
+            LOG.error("Invalid JWT token")
+        } catch (e: ExpiredJwtException) {
+            LOG.error("Expired JWT token")
+        } catch (e: UnsupportedJwtException) {
+            LOG.error("Unsupported JWT token")
+        } catch (e: IllegalArgumentException) {
+            LOG.error("JWT claims string is empty")
+        }
+        return false
     }
 
     fun getAuthentication(accessToken: String): Authentication {
-        val userDetails = userDetailsService.loadUserByUsername(getUsername(accessToken))
+        val userDetails = userDetailsService.loadUserByUsername(getEmail(accessToken))
         return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
     }
 
-    private fun getUsername(accessToken: String): String {
+    private fun getEmail(accessToken: String): String {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(accessToken).body.subject
     }
 }
