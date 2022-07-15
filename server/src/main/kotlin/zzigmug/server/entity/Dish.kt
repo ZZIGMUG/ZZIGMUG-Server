@@ -1,5 +1,6 @@
 package zzigmug.server.entity
 
+import zzigmug.server.data.DishRequestDto
 import javax.persistence.*
 
 @Entity

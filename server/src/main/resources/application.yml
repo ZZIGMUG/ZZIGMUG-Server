@@ -22,4 +22,4 @@ jwt:
 
 kakao:
   rest-api-key: 1a3b9f796a1b1a0be46ea81109580295
-  redirect-uri: http://3.35.248.163:8080/login/kakao/callback
+  redirect-uri: http://localhost:8080/login/kakao/callback

@@ -34,8 +34,8 @@ class FoodController(
     }
 
     @DeleteMapping
-    fun deleteFood(@RequestParam id: Long): ResponseEntity<Any> {
-        foodService.deleteFood(id)
+    fun deleteFood(@RequestParam foodId: Long): ResponseEntity<Any> {
+        foodService.deleteFood(foodId)
 
         return ResponseEntity
             .ok()
