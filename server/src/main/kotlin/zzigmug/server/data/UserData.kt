@@ -27,3 +27,9 @@ data class UserInfo(
         user.loginType
     )
 }
+
+data class UserPage(
+    var totalCount: Long,
+    var pageCount: Int,
+    var data: MutableList<UserInfo>
+)
