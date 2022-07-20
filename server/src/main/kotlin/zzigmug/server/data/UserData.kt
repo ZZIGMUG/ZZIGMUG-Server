@@ -3,18 +3,20 @@ package zzigmug.server.data
 import zzigmug.server.entity.User
 
 data class UserInfo(
-    var nickname: String? = null,
+    var id: Long?,
+    var nickname: String?,
     var email: String,
-    var height: Int? = null,
-    var weight: Int? = null,
-    var goal: Int? = null,
-    var gender: GenderType? = null,
+    var height: Int?,
+    var weight: Int?,
+    var goal: Int?,
+    var gender: GenderType?,
     var agree_marketing: Boolean,
     var exp: Long,
     var role: RoleType,
     var loginType: LoginType,
 ) {
     constructor(user: User): this(
+        user.id,
         user.nickname,
         user.email,
         user.height,
