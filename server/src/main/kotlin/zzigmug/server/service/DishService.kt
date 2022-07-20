@@ -7,7 +7,7 @@ import zzigmug.server.data.DishResponseDto
 import zzigmug.server.data.DishUpdateDto
 import zzigmug.server.entity.Dish
 import zzigmug.server.repository.DishRepository
-import zzigmug.server.repository.FoodRepository
+import zzigmug.server.repository.food.FoodRepository
 import zzigmug.server.repository.MealRepository
 import zzigmug.server.utils.exception.CustomException
 import zzigmug.server.utils.exception.ResponseCode

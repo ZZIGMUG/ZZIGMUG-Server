@@ -1,5 +1,6 @@
 package zzigmug.server.controller
 
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -27,10 +28,13 @@ class FoodController(
     }
 
     @GetMapping
-    fun readFoodList(): ResponseEntity<Any> {
+    fun readFoodList(@RequestParam params: MutableMap<String, String>): ResponseEntity<Any> {
+        val page = params["page"]?.toInt() ?: 0
+        val size = params["size"]?.toInt() ?: 10
+
         return ResponseEntity
             .ok()
-            .body(foodService.readAll())
+            .body(foodService.readAll(PageRequest.of(page, size), params))
     }
 
     @DeleteMapping
