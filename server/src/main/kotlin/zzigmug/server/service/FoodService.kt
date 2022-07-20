@@ -1,10 +1,13 @@
 package zzigmug.server.service
 
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import zzigmug.server.data.FoodPage
 import zzigmug.server.data.FoodRequestDto
 import zzigmug.server.data.FoodResponseDto
 import zzigmug.server.entity.Food
-import zzigmug.server.repository.FoodRepository
+import zzigmug.server.repository.food.FoodRepository
 import zzigmug.server.utils.exception.CustomException
 import zzigmug.server.utils.exception.ResponseCode
 
@@ -13,6 +16,7 @@ class FoodService(
     private val foodRepository: FoodRepository,
 ) {
 
+    @Transactional
     fun createFood(requestDto: FoodRequestDto): FoodResponseDto {
         val food = Food(requestDto)
         foodRepository.save(food)
@@ -20,17 +24,21 @@ class FoodService(
         return FoodResponseDto(food)
     }
 
+    @Transactional
     fun deleteFood(id: Long) {
         val food = foodRepository.findById(id).orElseThrow { throw CustomException(ResponseCode.FOOD_NOT_FOUND) }
         foodRepository.delete(food)
     }
 
-    fun readAll(): MutableList<FoodResponseDto> {
-        val response = mutableListOf<FoodResponseDto>()
-        foodRepository.findAll().forEach {
-            response.add(FoodResponseDto(it))
+    @Transactional(readOnly = true)
+    fun readAll(pageable: Pageable, queryParams: MutableMap<String, String>): FoodPage {
+        val foodList = mutableListOf<FoodResponseDto>()
+        val pages = foodRepository.findAllFoodBySearch(pageable, queryParams)
+
+        pages.forEach {
+            foodList.add(FoodResponseDto(it))
         }
 
-        return response
+        return FoodPage(pages.totalElements, pages.totalPages, foodList)
     }
 }

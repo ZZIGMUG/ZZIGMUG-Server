@@ -20,3 +20,9 @@ data class FoodResponseDto(
 ) {
     constructor(food: Food): this(food.id, food.name, food.calories, food.calbo, food.protein, food.fat)
 }
+
+data class FoodPage(
+    var totalCount: Long,
+    var pageCount: Int,
+    var data: MutableList<FoodResponseDto>
+)
