@@ -6,7 +6,7 @@ import zzigmug.server.data.MealRequestDto
 import zzigmug.server.data.MealResponseDto
 import zzigmug.server.entity.Meal
 import zzigmug.server.repository.MealRepository
-import zzigmug.server.repository.UserRepository
+import zzigmug.server.repository.user.UserRepository
 import zzigmug.server.utils.exception.CustomException
 import zzigmug.server.utils.exception.ResponseCode
 import java.time.LocalDate

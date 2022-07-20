@@ -6,7 +6,7 @@ import zzigmug.server.config.jwt.JwtTokenProvider
 import zzigmug.server.data.*
 import zzigmug.server.entity.User
 import zzigmug.server.external.auth.KakaoOAuth2
-import zzigmug.server.repository.UserRepository
+import zzigmug.server.repository.user.UserRepository
 import zzigmug.server.utils.exception.CustomException
 import zzigmug.server.utils.exception.ResponseCode
 
