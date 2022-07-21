@@ -16,6 +16,9 @@ enum class ResponseCode(
     FOOD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 음식이 존재하지 않습니다."),
     MEAL_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 식단이 존재하지 않습니다."),
     DISH_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 요리가 존재하지 않습니다."),
+    FOLLOW_NOT_FOUND(HttpStatus.NOT_FOUND, "회원이 상대방을 팔로우하고 있지 않습니다."),
+
+    BAD_REQUEST(HttpStatus.BAD_REQUEST, "Bad request"),
 
     TOKEN_INVALID_SIGNATURE(HttpStatus.NOT_FOUND, "Invalid JWT signature"),
     TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "Invalid JWT token"),

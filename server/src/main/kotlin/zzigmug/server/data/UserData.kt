@@ -35,3 +35,11 @@ data class UserPage(
     var pageCount: Int,
     var data: MutableList<UserInfo>
 )
+
+data class UserFollowingDto(
+    var id: Long?,
+    var nickname: String?,
+    var exp: Long,
+) {
+    constructor(user: User): this(user.id, user.nickname, user.exp)
+}
