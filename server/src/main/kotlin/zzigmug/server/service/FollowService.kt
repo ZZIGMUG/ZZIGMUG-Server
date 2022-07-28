@@ -17,19 +17,20 @@ class FollowService(
     private val userRepository: UserRepository,
 ) {
 
-    fun followUser(followingId: Long, userEmail: String): ResponseMessage {
+    fun followUser(followingId: Long, userEmail: String) {
         val user = userRepository.findByEmail(userEmail)?: throw CustomException(ResponseCode.USER_NOT_FOUND)
         val followingUser = userRepository.findById(followingId).orElseThrow {
             throw CustomException(ResponseCode.USER_NOT_FOUND)
         }
 
+        if (followRepository.existsByFollowerAndFollowing(user, followingUser))
+            throw CustomException(ResponseCode.ALREADY_FOLLOWING)
+
         val follow = Follow(user, followingUser)
         followRepository.save(follow)
-
-        return ResponseMessage(HttpStatus.OK.value(), "성공")
     }
 
-    fun unfollowUser(followingId: Long, userEmail: String): ResponseMessage {
+    fun unfollowUser(followingId: Long, userEmail: String) {
         val follower = userRepository.findByEmail(userEmail)?: throw CustomException(ResponseCode.USER_NOT_FOUND)
         val following = userRepository.findById(followingId).orElseThrow {
             throw CustomException(ResponseCode.USER_NOT_FOUND)
@@ -39,7 +40,6 @@ class FollowService(
             throw CustomException(ResponseCode.FOLLOW_NOT_FOUND)
 
         followRepository.delete(follow)
-        return ResponseMessage(HttpStatus.OK.value(), "성공")
     }
 
     fun readAllFollower(pageable: Pageable, userId: Long): MutableList<UserFollowingDto> {

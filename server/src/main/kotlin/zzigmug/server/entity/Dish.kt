@@ -1,13 +1,12 @@
 package zzigmug.server.entity
 
-import zzigmug.server.data.DishRequestDto
 import javax.persistence.*
 
 @Entity
 class Dish (
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "meal_id")
-    var meal: Meal,
+    @JoinColumn(name = "photo_id")
+    var photo: Photo,
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "food_id")
