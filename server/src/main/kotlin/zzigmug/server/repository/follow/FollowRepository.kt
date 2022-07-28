@@ -8,4 +8,6 @@ import zzigmug.server.entity.User
 @Repository
 interface FollowRepository: JpaRepository<Follow, Long>, FollowDslRepository {
     fun findByFollowerAndFollowing(follower: User, following: User): Follow?
+
+    fun existsByFollowerAndFollowing(follower: User, following: User): Boolean
 }

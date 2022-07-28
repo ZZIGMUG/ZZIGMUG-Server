@@ -14,9 +14,11 @@ enum class ResponseCode(
     USER_NICKNAME_DUPLICATED(HttpStatus.CONFLICT, "중복된 닉네임이 이미 존재합니다."),
 
     FOOD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 음식이 존재하지 않습니다."),
-    MEAL_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 식단이 존재하지 않습니다."),
+    PHOTO_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 사진이 존재하지 않습니다."),
     DISH_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 요리가 존재하지 않습니다."),
+
     FOLLOW_NOT_FOUND(HttpStatus.NOT_FOUND, "회원이 상대방을 팔로우하고 있지 않습니다."),
+    ALREADY_FOLLOWING(HttpStatus.BAD_REQUEST, "이미 상대방을 팔로잉하고 있습니다."),
 
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "Bad request"),
 
