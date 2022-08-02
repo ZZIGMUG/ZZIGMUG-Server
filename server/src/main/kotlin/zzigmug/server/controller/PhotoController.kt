@@ -32,11 +32,11 @@ class PhotoController(
     ])
     @PostMapping
     fun saveMeal(@RequestBody requestDto: PhotoRequestDto, request: HttpServletRequest): ResponseEntity<Any> {
-        val userId = request.userPrincipal.name
+        val userEmail = request.userPrincipal.name
 
         return ResponseEntity
             .ok()
-            .body(photoService.savePhoto(requestDto, userId))
+            .body(photoService.savePhoto(requestDto, userEmail))
     }
 
     @Operation(summary = "날짜로 사진 조회 API")
@@ -46,11 +46,11 @@ class PhotoController(
     ])
     @GetMapping
     fun readByDate(@DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam date: LocalDate, request: HttpServletRequest): ResponseEntity<Any> {
-        val userId = request.userPrincipal.name
+        val userEmail = request.userPrincipal.name
 
         return ResponseEntity
             .ok()
-            .body(photoService.readPhotosByDate(date, userId))
+            .body(photoService.readPhotosByDate(date, userEmail))
     }
 
     @Operation(summary = "사진 삭제 API")

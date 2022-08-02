@@ -2,6 +2,7 @@ package zzigmug.server.service
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import zzigmug.server.data.CalorieResponseDto
 import zzigmug.server.data.DishRequestDto
 import zzigmug.server.data.DishResponseDto
 import zzigmug.server.data.DishUpdateDto
@@ -9,14 +10,18 @@ import zzigmug.server.entity.Dish
 import zzigmug.server.repository.DishRepository
 import zzigmug.server.repository.food.FoodRepository
 import zzigmug.server.repository.PhotoRepository
+import zzigmug.server.repository.user.UserRepository
 import zzigmug.server.utils.exception.CustomException
 import zzigmug.server.utils.exception.ResponseCode
+import java.time.Instant
+import java.time.LocalDate
 
 @Service
 class DishService(
     private val dishRepository: DishRepository,
     private val photoRepository: PhotoRepository,
     private val foodRepository: FoodRepository,
+    private val userRepository: UserRepository,
 ) {
     @Transactional
     fun createDish(photoId: Long, requestDto: DishRequestDto): DishResponseDto {
@@ -32,6 +37,40 @@ class DishService(
         dishRepository.save(dish)
 
         return DishResponseDto(dish)
+    }
+
+    @Transactional(readOnly = true)
+    fun getWeeklyCalories(email: String, date: LocalDate): MutableList<CalorieResponseDto> {
+        val startDate = date.minusDays(7)
+        val user = userRepository.findByEmail(email)?: throw CustomException(ResponseCode.USER_NOT_FOUND)
+        val dishes = dishRepository.findByUserAndCreateAtBetween(user, Instant.from(startDate), Instant.from(date.atTime(23, 59, 59)))
+
+        val responseList = mutableListOf<CalorieResponseDto>()
+        var calories = .0
+        var currentDate = startDate
+
+        dishes.forEach {
+            val isEqualDate = it.createAt.isAfter(Instant.from(currentDate.atStartOfDay()))
+                    && it.createAt.isBefore(Instant.from(currentDate.atTime(23, 59, 59)))
+
+            if (isEqualDate) {
+                calories += (it.food.calories * it.amount)
+            }
+            else {
+                while (!isEqualDate) {
+                    responseList.add(CalorieResponseDto(currentDate, calories))
+                    currentDate = currentDate.plusDays(1)
+                    calories = .0
+                }
+            }
+        }
+
+        while (!currentDate.isAfter(date)) {
+            responseList.add(CalorieResponseDto(currentDate, .0))
+            currentDate = currentDate.plusDays(1)
+        }
+
+        return responseList
     }
 
     @Transactional

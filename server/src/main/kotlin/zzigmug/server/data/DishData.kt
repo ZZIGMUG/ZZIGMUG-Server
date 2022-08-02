@@ -1,6 +1,7 @@
 package zzigmug.server.data
 
 import zzigmug.server.entity.Dish
+import java.time.LocalDate
 
 data class DishRequestDto (
     val foodId: Long,
@@ -30,3 +31,8 @@ data class DishResponseDto (
         dish.food.fat * dish.amount
         )
 }
+
+data class CalorieResponseDto (
+    val date: LocalDate,
+    val calorie: Double
+)
