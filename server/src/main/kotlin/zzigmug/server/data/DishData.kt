@@ -17,7 +17,7 @@ data class DishResponseDto (
     val foodId: Long?,
     val name: String,
     val calories: Double,
-    val calbo: Double,
+    val carbohydrate: Double,
     val protein: Double,
     val fat: Double,
 ) {

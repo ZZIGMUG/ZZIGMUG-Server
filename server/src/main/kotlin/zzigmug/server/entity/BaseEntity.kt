@@ -4,6 +4,7 @@ import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.Instant
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @MappedSuperclass
@@ -15,10 +16,10 @@ abstract class BaseEntity {
     var id: Long? = null
 
     @CreatedDate
-    lateinit var createAt: Instant
+    lateinit var createAt: LocalDateTime
 
     @LastModifiedDate
-    lateinit var updateAt: Instant
+    lateinit var updateAt: LocalDateTime
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

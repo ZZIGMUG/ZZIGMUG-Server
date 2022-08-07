@@ -7,4 +7,5 @@ import zzigmug.server.entity.Food
 @Repository
 interface FoodRepository: JpaRepository<Food, Long>, FoodDslRepository {
     fun findByName(name: String): Food?
+    fun existsByName(name: String): Boolean
 }

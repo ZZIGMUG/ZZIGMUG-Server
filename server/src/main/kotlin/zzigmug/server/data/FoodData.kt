@@ -14,7 +14,7 @@ data class FoodResponseDto(
     var id: Long?,
     var name: String,
     var calories: Int,
-    var calbo: Int,
+    var carbohydrate: Int,
     var protein: Int,
     var fat: Int
 ) {

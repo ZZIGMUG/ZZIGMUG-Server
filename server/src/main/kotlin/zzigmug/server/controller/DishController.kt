@@ -65,7 +65,7 @@ class DishController(
         ApiResponse(responseCode = "200", description = "성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = NutrientResponseDto::class))))]),
     ])
-    @GetMapping
+    @GetMapping("/nutrient")
     fun readNutrients(
         @Parameter(description = "조회할 날짜") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam date: LocalDate,
         request: HttpServletRequest

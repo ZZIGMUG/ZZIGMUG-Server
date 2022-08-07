@@ -14,6 +14,8 @@ enum class ResponseCode(
     USER_NICKNAME_DUPLICATED(HttpStatus.CONFLICT, "중복된 닉네임이 이미 존재합니다."),
 
     FOOD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 음식이 존재하지 않습니다."),
+    FOOD_DUPLICATED(HttpStatus.CONFLICT, "중복된 음식이 이미 존재합니다."),
+
     PHOTO_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 사진이 존재하지 않습니다."),
     DISH_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 요리가 존재하지 않습니다."),
 
