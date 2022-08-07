@@ -1,6 +1,5 @@
 package zzigmug.server.controller
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.ArraySchema
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*
 import zzigmug.server.data.*
 import zzigmug.server.service.DishService
 import zzigmug.server.utils.exception.ErrorResponse
-import zzigmug.server.utils.exception.ResponseCode
 import zzigmug.server.utils.exception.ResponseMessage
 import java.time.LocalDate
 import javax.servlet.http.HttpServletRequest
@@ -42,7 +40,7 @@ class DishController(
     ): ResponseEntity<Any> {
         return ResponseEntity
             .ok()
-            .body(dishService.createDish(photoId, requestDto))
+            .body(dishService.saveDish(photoId, requestDto))
     }
 
     @Operation(summary = "주간 칼로리 정보 조회 API")
@@ -61,6 +59,24 @@ class DishController(
             .ok()
             .body(dishService.getWeeklyCalories(userEmail, date))
     }
+
+    @Operation(summary = "오늘의 영양소 정보 조회 API")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "성공", content = [
+            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = NutrientResponseDto::class))))]),
+    ])
+    @GetMapping
+    fun readNutrients(
+        @Parameter(description = "조회할 날짜") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam date: LocalDate,
+        request: HttpServletRequest
+    ): ResponseEntity<Any> {
+        val userEmail = request.userPrincipal.name
+
+        return ResponseEntity
+            .ok()
+            .body(dishService.getNutrients(userEmail, date))
+    }
+
 
     @Operation(summary = "식사량 수정 API")
     @ApiResponses(value = [

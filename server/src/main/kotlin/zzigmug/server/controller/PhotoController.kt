@@ -11,12 +11,13 @@ import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import zzigmug.server.data.PhotoRequestDto
+import org.springframework.web.multipart.MultipartFile
 import zzigmug.server.data.PhotoResponseDto
 import zzigmug.server.service.PhotoService
 import zzigmug.server.utils.exception.ErrorResponse
 import zzigmug.server.utils.exception.ResponseMessage
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.servlet.http.HttpServletRequest
 
 @Tag(name = "photo", description = "음식 사진 API")
@@ -31,12 +32,15 @@ class PhotoController(
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = PhotoResponseDto::class))))]),
     ])
     @PostMapping
-    fun saveMeal(@RequestBody requestDto: PhotoRequestDto, request: HttpServletRequest): ResponseEntity<Any> {
+    fun savePhoto(
+        @RequestPart image: MultipartFile,
+        @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") @RequestParam time: LocalDateTime,
+        request: HttpServletRequest): ResponseEntity<Any> {
         val userEmail = request.userPrincipal.name
 
         return ResponseEntity
             .ok()
-            .body(photoService.savePhoto(requestDto, userEmail))
+            .body(photoService.extractDishesFromPhoto(image, time, userEmail))
     }
 
     @Operation(summary = "날짜로 사진 조회 API")

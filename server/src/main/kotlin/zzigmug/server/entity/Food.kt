@@ -13,7 +13,7 @@ class Food (
     var calories: Int,
 
     @Column
-    var calbo: Int,
+    var carbohydrate: Int,
 
     @Column
     var fat: Int,
@@ -21,11 +21,11 @@ class Food (
     @Column
     var protein: Int,
 
-): BaseEntity() {
+    ): BaseEntity() {
     constructor(requestDto: FoodRequestDto): this(
         name = requestDto.name,
         calories = requestDto.calories,
-        calbo = requestDto.calbo,
+        carbohydrate = requestDto.carbohydrate,
         fat = requestDto.fat,
         protein = requestDto.protein
     )

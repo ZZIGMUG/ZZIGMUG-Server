@@ -2,10 +2,7 @@ package zzigmug.server.service
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import zzigmug.server.data.CalorieResponseDto
-import zzigmug.server.data.DishRequestDto
-import zzigmug.server.data.DishResponseDto
-import zzigmug.server.data.DishUpdateDto
+import zzigmug.server.data.*
 import zzigmug.server.entity.Dish
 import zzigmug.server.repository.DishRepository
 import zzigmug.server.repository.food.FoodRepository
@@ -24,7 +21,7 @@ class DishService(
     private val userRepository: UserRepository,
 ) {
     @Transactional
-    fun createDish(photoId: Long, requestDto: DishRequestDto): DishResponseDto {
+    fun saveDish(photoId: Long, requestDto: DishRequestDto): DishResponseDto {
         val food = foodRepository.findById(requestDto.foodId).orElseThrow {
             throw CustomException(ResponseCode.FOOD_NOT_FOUND)
         }
@@ -71,6 +68,21 @@ class DishService(
         }
 
         return responseList
+    }
+
+    @Transactional(readOnly = true)
+    fun getNutrients(email: String, date: LocalDate): NutrientResponseDto {
+        val user = userRepository.findByEmail(email)?: throw CustomException(ResponseCode.USER_NOT_FOUND)
+        val dishes = dishRepository.findByUserAndCreateAtBetween(user, Instant.from(date.atStartOfDay()), Instant.from(date.atTime(23, 59, 59)))
+
+        val response = NutrientResponseDto(.0, .0, .0)
+        dishes.forEach {
+            response.carbohydrate += it.food.carbohydrate
+            response.fat += it.food.fat
+            response.protein += it.food.protein
+        }
+
+        return response
     }
 
     @Transactional
