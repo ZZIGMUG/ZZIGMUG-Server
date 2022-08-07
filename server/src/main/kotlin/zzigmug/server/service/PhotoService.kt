@@ -2,29 +2,40 @@ package zzigmug.server.service
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import zzigmug.server.data.PhotoRequestDto
-import zzigmug.server.data.PhotoResponseDto
+import org.springframework.web.multipart.MultipartFile
+import zzigmug.server.data.*
+import zzigmug.server.entity.Food
 import zzigmug.server.entity.Photo
 import zzigmug.server.repository.PhotoRepository
+import zzigmug.server.repository.food.FoodRepository
 import zzigmug.server.repository.user.UserRepository
 import zzigmug.server.utils.exception.CustomException
 import zzigmug.server.utils.exception.ResponseCode
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Service
 class PhotoService(
     private val photoRepository: PhotoRepository,
+    private val foodRepository: FoodRepository,
     private val userRepository: UserRepository,
     private val dishService: DishService,
 ) {
     @Transactional
-    fun savePhoto(requestDto: PhotoRequestDto, userId: String): PhotoResponseDto {
+    fun extractDishesFromPhoto(image: MultipartFile, time: LocalDateTime, userId: String): PhotoResponseDto {
+        // image를 s3에 저장 -> url 리턴
+        val imageUrl = ""
         val user = userRepository.findByEmail(userId)?: throw CustomException(ResponseCode.USER_NOT_FOUND)
-        val photo = Photo(requestDto, user)
+        val photo = Photo(user, time, imageUrl)
         photoRepository.save(photo)
 
-        requestDto.dishList.forEach {
-            dishService.createDish(photo.id!!, it)
+        // image를 ML server로 보내 음식 추출
+        val foodNames = listOf("바나나", "사과", "오렌지")
+
+        val dishList = mutableListOf<DishResponseDto>()
+        foodNames.forEach {
+            val food = foodRepository.findByName(it) ?: foodRepository.save(Food(it, 0, 0, 0, 0))
+            dishService.saveDish(photo.id!!, DishRequestDto(food.id!!, 1.0))
         }
 
         return PhotoResponseDto(photo)

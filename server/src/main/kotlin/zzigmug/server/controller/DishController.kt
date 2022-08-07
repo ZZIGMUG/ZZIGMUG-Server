@@ -8,23 +8,16 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
-import zzigmug.server.data.DishRequestDto
-import zzigmug.server.data.DishResponseDto
-import zzigmug.server.data.DishUpdateDto
-import zzigmug.server.data.LoginResponseDto
+import org.springframework.web.bind.annotation.*
+import zzigmug.server.data.*
 import zzigmug.server.service.DishService
 import zzigmug.server.utils.exception.ErrorResponse
-import zzigmug.server.utils.exception.ResponseCode
 import zzigmug.server.utils.exception.ResponseMessage
+import java.time.LocalDate
+import javax.servlet.http.HttpServletRequest
 
 @Tag(name = "dish", description = "식사 정보 API")
 @RestController
@@ -47,8 +40,43 @@ class DishController(
     ): ResponseEntity<Any> {
         return ResponseEntity
             .ok()
-            .body(dishService.createDish(photoId, requestDto))
+            .body(dishService.saveDish(photoId, requestDto))
     }
+
+    @Operation(summary = "주간 칼로리 정보 조회 API")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "성공", content = [
+            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = CalorieResponseDto::class))))]),
+    ])
+    @GetMapping
+    fun readWeeklyCalories(
+        @Parameter(description = "조회할 날짜") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam date: LocalDate,
+        request: HttpServletRequest
+    ): ResponseEntity<Any> {
+        val userEmail = request.userPrincipal.name
+
+        return ResponseEntity
+            .ok()
+            .body(dishService.getWeeklyCalories(userEmail, date))
+    }
+
+    @Operation(summary = "오늘의 영양소 정보 조회 API")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "성공", content = [
+            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = NutrientResponseDto::class))))]),
+    ])
+    @GetMapping("/nutrient")
+    fun readNutrients(
+        @Parameter(description = "조회할 날짜") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam date: LocalDate,
+        request: HttpServletRequest
+    ): ResponseEntity<Any> {
+        val userEmail = request.userPrincipal.name
+
+        return ResponseEntity
+            .ok()
+            .body(dishService.getNutrients(userEmail, date))
+    }
+
 
     @Operation(summary = "식사량 수정 API")
     @ApiResponses(value = [

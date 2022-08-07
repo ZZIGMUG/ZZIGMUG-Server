@@ -13,5 +13,5 @@ class Dish (
     var food: Food,
 
     @Column
-    var amount: Float,
+    var amount: Double,
 ): BaseEntity()
