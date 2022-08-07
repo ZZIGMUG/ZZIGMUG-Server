@@ -45,6 +45,7 @@ class DishService(
         var calories = .0
         var currentDate = startDate
 
+        // 이 부분 수정 필요 - 무한 로딩
         dishes.forEach {
             val isEqualDate = it.createAt.isAfter(currentDate.atStartOfDay())
                     && it.createAt.isBefore(currentDate.atTime(23, 59, 59))

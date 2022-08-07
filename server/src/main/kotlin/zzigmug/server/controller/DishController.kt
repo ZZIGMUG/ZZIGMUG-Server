@@ -48,7 +48,7 @@ class DishController(
         ApiResponse(responseCode = "200", description = "성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = CalorieResponseDto::class))))]),
     ])
-    @GetMapping
+    @GetMapping("/week/calorie")
     fun readWeeklyCalories(
         @Parameter(description = "조회할 날짜") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam date: LocalDate,
         request: HttpServletRequest
