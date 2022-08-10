@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.crypto.factory.PasswordEncoderFactories
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import zzigmug.server.config.jwt.*
 
@@ -19,6 +21,9 @@ class SecurityConfig(
     private val jwtAccessDeniedHandler: JwtAccessDeniedHandler,
     private val jwtTokenProvider: JwtTokenProvider,
 ): WebSecurityConfigurerAdapter() {
+
+    @Bean
+    fun passwordEncoder(): PasswordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder()
 
     @Bean
     @Throws(Exception::class)
@@ -48,8 +53,32 @@ class SecurityConfig(
 
             .and()
             .authorizeRequests()
-            .antMatchers("/h2-console/**", "/**").permitAll()
-            .anyRequest().permitAll()
+            .antMatchers(
+                "/h2-console/**",
+                "/swagger-ui.html",
+                "/swagger-ui/**",
+                "/swagger-resources",
+                "/swagger-resources/**",
+                "configuration/ui",
+                "configuration/security",
+                "/favicon.ico",
+                "/webjars/**",
+                "/v2/api-docs",
+                "/v3/api-docs/**",
+                "/login/kakao/callback",
+                "/join",
+                "/check/nickname",
+            ).permitAll()
+
+            .and()
+            .authorizeRequests()
+            .antMatchers("/admin/**")
+            .access("hasAnyRole('ROLE_ADMIN')")
+
+            .and()
+            .authorizeRequests()
+            .anyRequest()
+            .authenticated()
 
             .and()
             .addFilterBefore(JwtFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter::class.java)
