@@ -82,12 +82,12 @@ class PhotoService(
         loop@ while(!currentDate.isAfter(date)) {
             if (photos[index].date.isAfter(currentDate.atTime(23, 59, 59))) {
                 responseList.add(CalorieResponseDto(currentDate, calories, breakfast, lunch, dinner))
+
                 currentDate = currentDate.plusDays(1)
                 calories = .0
                 breakfast = .0
                 lunch = .0
                 dinner = .0
-
                 continue
             }
 
@@ -113,8 +113,12 @@ class PhotoService(
         }
 
         while (!currentDate.isAfter(date)) {
-            responseList.add(CalorieResponseDto(currentDate, .0, .0, .0, .0))
+            responseList.add(CalorieResponseDto(currentDate, calories, breakfast, lunch, dinner))
             currentDate = currentDate.plusDays(1)
+            calories = .0
+            breakfast = .0
+            lunch = .0
+            dinner = .0
         }
 
         return responseList
