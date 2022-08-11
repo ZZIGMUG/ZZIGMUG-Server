@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import zzigmug.server.config.jwt.JwtTokenProvider
 import zzigmug.server.data.*
+import zzigmug.server.data.type.LoginType
+import zzigmug.server.data.type.RoleType
 import zzigmug.server.entity.User
 import zzigmug.server.external.auth.KakaoOAuth2
 import zzigmug.server.repository.user.UserRepository

@@ -22,11 +22,11 @@ class PhotoService(
     private val dishService: DishService,
 ) {
     @Transactional
-    fun extractDishesFromPhoto(image: MultipartFile, time: LocalDateTime, userId: String): PhotoResponseDto {
+    fun extractDishesFromPhoto(image: MultipartFile, requestDto: PhotoRequestDto, userId: String): PhotoResponseDto {
         // image를 s3에 저장 -> url 리턴
         val imageUrl = ""
         val user = userRepository.findByEmail(userId)?: throw CustomException(ResponseCode.USER_NOT_FOUND)
-        val photo = Photo(user, time, imageUrl)
+        val photo = Photo(user, requestDto.date, imageUrl, requestDto.mealType)
         photoRepository.save(photo)
 
         // image를 ML server로 보내 음식 추출

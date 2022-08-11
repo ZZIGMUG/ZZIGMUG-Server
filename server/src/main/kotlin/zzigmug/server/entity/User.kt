@@ -2,9 +2,9 @@ package zzigmug.server.entity
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
-import zzigmug.server.data.GenderType
-import zzigmug.server.data.LoginType
-import zzigmug.server.data.RoleType
+import zzigmug.server.data.type.GenderType
+import zzigmug.server.data.type.LoginType
+import zzigmug.server.data.type.RoleType
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.EnumType

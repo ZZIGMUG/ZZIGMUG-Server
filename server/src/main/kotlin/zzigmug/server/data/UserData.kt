@@ -1,5 +1,8 @@
 package zzigmug.server.data
 
+import zzigmug.server.data.type.GenderType
+import zzigmug.server.data.type.LoginType
+import zzigmug.server.data.type.RoleType
 import zzigmug.server.entity.User
 
 data class UserInfo(

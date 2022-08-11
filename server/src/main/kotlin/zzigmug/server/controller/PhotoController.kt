@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import zzigmug.server.data.PhotoRequestDto
 import zzigmug.server.data.PhotoResponseDto
 import zzigmug.server.service.PhotoService
 import zzigmug.server.utils.exception.ErrorResponse
@@ -34,13 +35,13 @@ class PhotoController(
     @PostMapping
     fun savePhoto(
         @RequestPart image: MultipartFile,
-        @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") @RequestParam time: LocalDateTime,
+        @RequestPart requestDto: PhotoRequestDto,
         request: HttpServletRequest): ResponseEntity<Any> {
         val userEmail = request.userPrincipal.name
 
         return ResponseEntity
             .ok()
-            .body(photoService.extractDishesFromPhoto(image, time, userEmail))
+            .body(photoService.extractDishesFromPhoto(image, requestDto, userEmail))
     }
 
     @Operation(summary = "날짜로 사진 조회 API")

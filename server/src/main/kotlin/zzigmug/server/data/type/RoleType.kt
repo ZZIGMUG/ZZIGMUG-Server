@@ -1,4 +1,4 @@
-package zzigmug.server.data
+package zzigmug.server.data.type
 
 enum class RoleType(type: String) {
     ROLE_USER("ROLE_USER"),

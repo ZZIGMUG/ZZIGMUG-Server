@@ -1,8 +1,14 @@
 package zzigmug.server.data
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import zzigmug.server.data.type.MealType
 import zzigmug.server.entity.Photo
 import java.time.LocalDateTime
+
+data class PhotoRequestDto (
+    val date: LocalDateTime,
+    val mealType: MealType,
+)
 
 data class PhotoResponseDto (
     val id: Long?,

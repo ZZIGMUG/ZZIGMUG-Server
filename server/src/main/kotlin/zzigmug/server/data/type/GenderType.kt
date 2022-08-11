@@ -1,4 +1,4 @@
-package zzigmug.server.data
+package zzigmug.server.data.type
 
 enum class GenderType(gender: String) {
     MAN("M"),
