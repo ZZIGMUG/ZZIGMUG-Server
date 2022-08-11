@@ -16,6 +16,7 @@ class Photo (
     @Column
     var image: String? = null,
 
+    @Enumerated(EnumType.STRING)
     @Column
     var mealType: MealType,
 

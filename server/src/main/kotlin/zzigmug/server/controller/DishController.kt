@@ -43,41 +43,6 @@ class DishController(
             .body(dishService.saveDish(photoId, requestDto))
     }
 
-    @Operation(summary = "주간 칼로리 정보 조회 API")
-    @ApiResponses(value = [
-        ApiResponse(responseCode = "200", description = "성공", content = [
-            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = CalorieResponseDto::class))))]),
-    ])
-    @GetMapping("/week/calorie")
-    fun readWeeklyCalories(
-        @Parameter(description = "조회할 날짜") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam date: LocalDate,
-        request: HttpServletRequest
-    ): ResponseEntity<Any> {
-        val userEmail = request.userPrincipal.name
-
-        return ResponseEntity
-            .ok()
-            .body(dishService.getWeeklyCalories(userEmail, date))
-    }
-
-    @Operation(summary = "오늘의 영양소 정보 조회 API")
-    @ApiResponses(value = [
-        ApiResponse(responseCode = "200", description = "성공", content = [
-            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = NutrientResponseDto::class))))]),
-    ])
-    @GetMapping("/nutrient")
-    fun readNutrients(
-        @Parameter(description = "조회할 날짜") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam date: LocalDate,
-        request: HttpServletRequest
-    ): ResponseEntity<Any> {
-        val userEmail = request.userPrincipal.name
-
-        return ResponseEntity
-            .ok()
-            .body(dishService.getNutrients(userEmail, date))
-    }
-
-
     @Operation(summary = "식사량 수정 API")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "성공", content = [

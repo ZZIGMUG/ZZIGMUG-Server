@@ -1,6 +1,7 @@
 package zzigmug.server.controller
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -9,9 +10,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import zzigmug.server.data.CalorieResponseDto
+import zzigmug.server.data.NutrientResponseDto
 import zzigmug.server.data.PhotoRequestDto
 import zzigmug.server.data.PhotoResponseDto
 import zzigmug.server.service.PhotoService
@@ -32,10 +36,10 @@ class PhotoController(
         ApiResponse(responseCode = "200", description = "성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = PhotoResponseDto::class))))]),
     ])
-    @PostMapping
+    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE])
     fun savePhoto(
-        @RequestPart image: MultipartFile,
-        @RequestPart requestDto: PhotoRequestDto,
+        @RequestPart(name = "image") image: MultipartFile,
+        @RequestPart(name = "requestDto") requestDto: PhotoRequestDto,
         request: HttpServletRequest): ResponseEntity<Any> {
         val userEmail = request.userPrincipal.name
 
@@ -56,6 +60,40 @@ class PhotoController(
         return ResponseEntity
             .ok()
             .body(photoService.readPhotosByDate(date, userEmail))
+    }
+
+    @Operation(summary = "주간 칼로리 정보 조회 API")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "성공", content = [
+            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = CalorieResponseDto::class))))]),
+    ])
+    @GetMapping("/week/calorie")
+    fun readWeeklyCalories(
+        @Parameter(description = "조회할 날짜") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam date: LocalDate,
+        request: HttpServletRequest
+    ): ResponseEntity<Any> {
+        val userEmail = request.userPrincipal.name
+
+        return ResponseEntity
+            .ok()
+            .body(photoService.getWeeklyCalories(userEmail, date))
+    }
+
+    @Operation(summary = "오늘의 영양소 정보 조회 API")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "성공", content = [
+            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = NutrientResponseDto::class))))]),
+    ])
+    @GetMapping("/nutrient")
+    fun readNutrients(
+        @Parameter(description = "조회할 날짜") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam date: LocalDate,
+        request: HttpServletRequest
+    ): ResponseEntity<Any> {
+        val userEmail = request.userPrincipal.name
+
+        return ResponseEntity
+            .ok()
+            .body(photoService.getNutrients(userEmail, date))
     }
 
     @Operation(summary = "사진 삭제 API")

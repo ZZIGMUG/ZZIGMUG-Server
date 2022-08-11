@@ -17,7 +17,6 @@ class DishService(
     private val dishRepository: DishRepository,
     private val photoRepository: PhotoRepository,
     private val foodRepository: FoodRepository,
-    private val userRepository: UserRepository,
 ) {
     @Transactional
     fun saveDish(photoId: Long, requestDto: DishRequestDto): DishResponseDto {
@@ -33,57 +32,6 @@ class DishService(
         dishRepository.save(dish)
 
         return DishResponseDto(dish)
-    }
-
-    @Transactional(readOnly = true)
-    fun getWeeklyCalories(email: String, date: LocalDate): MutableList<CalorieResponseDto> {
-        val startDate = date.minusDays(7)
-        val user = userRepository.findByEmail(email)?: throw CustomException(ResponseCode.USER_NOT_FOUND)
-        val dishes = dishRepository.findByUserAndCreatedAtBetween(user, startDate.atStartOfDay(), date.atTime(23, 59, 59))
-
-        val responseList = mutableListOf<CalorieResponseDto>()
-        var calories = .0
-        var currentDate = startDate
-
-        // 이 부분 수정 필요 - 무한 로딩
-        dishes.forEach {
-            val isEqualDate = it.createAt.isAfter(currentDate.atStartOfDay())
-                    && it.createAt.isBefore(currentDate.atTime(23, 59, 59))
-
-            if (isEqualDate) {
-                calories += (it.food.calories * it.amount)
-            }
-            else {
-                while (!isEqualDate) {
-                    responseList.add(CalorieResponseDto(currentDate, calories))
-                    currentDate = currentDate.plusDays(1)
-                    calories = .0
-                }
-            }
-        }
-
-        while (!currentDate.isAfter(date)) {
-            responseList.add(CalorieResponseDto(currentDate, .0))
-            currentDate = currentDate.plusDays(1)
-        }
-
-        return responseList
-    }
-
-    @Transactional(readOnly = true)
-    fun getNutrients(email: String, date: LocalDate): NutrientResponseDto {
-
-        val user = userRepository.findByEmail(email)?: throw CustomException(ResponseCode.USER_NOT_FOUND)
-        val dishes = dishRepository.findByUserAndCreatedAtBetween(user, date.atStartOfDay(), date.atTime(23, 59, 59))
-
-        val response = NutrientResponseDto(.0, .0, .0)
-        dishes.forEach {
-            response.carbohydrate += it.food.carbohydrate
-            response.fat += it.food.fat
-            response.protein += it.food.protein
-        }
-
-        return response
     }
 
     @Transactional

@@ -1,6 +1,7 @@
 package zzigmug.server.data
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import org.springframework.format.annotation.DateTimeFormat
 import zzigmug.server.data.type.MealType
 import zzigmug.server.entity.Photo
 import java.time.LocalDateTime

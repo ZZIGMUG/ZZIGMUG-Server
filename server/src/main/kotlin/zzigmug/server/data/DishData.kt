@@ -34,7 +34,10 @@ data class DishResponseDto (
 
 data class CalorieResponseDto (
     val date: LocalDate,
-    val calorie: Double
+    val totalCalorie: Double,
+    val breakfastCalorie: Double,
+    val lunchCalorie: Double,
+    val dinnerCalorie: Double,
 )
 
 data class NutrientResponseDto (
