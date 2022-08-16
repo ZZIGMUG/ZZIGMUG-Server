@@ -20,11 +20,11 @@ class PhotoService(
     private val foodRepository: FoodRepository,
     private val userRepository: UserRepository,
     private val dishService: DishService,
+    private val awsS3Service: AwsS3Service,
 ) {
     @Transactional
     fun extractDishesFromPhoto(image: MultipartFile, requestDto: PhotoRequestDto, userId: String): PhotoResponseDto {
-        // image를 s3에 저장 -> url 리턴
-        val imageUrl = ""
+        val imageUrl = awsS3Service.upload(image.inputStream, image.originalFilename!!, image.size)
         val user = userRepository.findByEmail(userId)?: throw CustomException(ResponseCode.USER_NOT_FOUND)
         val photo = Photo(user, requestDto.date, imageUrl, requestDto.mealType)
         photoRepository.save(photo)

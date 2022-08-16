@@ -23,3 +23,16 @@ jwt:
 kakao:
   rest-api-key: 1a3b9f796a1b1a0be46ea81109580295
   redirect-uri: http://3.35.248.163:8080/login/kakao/callback
+
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIAWQXLY55MOETPQZE5
+      secretKey: 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
+    s3:
+      bucket: zzigmug
+      dir: /photo
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false

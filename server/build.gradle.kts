@@ -40,6 +40,9 @@ dependencies {
 	implementation("org.springdoc:springdoc-openapi-ui:1.6.6")
 	implementation("org.springdoc:springdoc-openapi-data-rest:1.6.6")
 
+	// AWS S3
+	implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
