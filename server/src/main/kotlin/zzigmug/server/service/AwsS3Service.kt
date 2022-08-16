@@ -13,10 +13,10 @@ class AwsS3Service(
     private val s3Client: AmazonS3Client
 ) {
 
-    fun upload(inputStream: InputStream, originFileName: String, fileSize: String): String {
+    fun upload(inputStream: InputStream, originFileName: String, fileSize: Long): String {
         val s3FileName = UUID.randomUUID().toString() + "-" + originFileName
         val objMeta = ObjectMetadata()
-        objMeta.contentLength = fileSize.toLong()
+        objMeta.contentLength = fileSize
 
         s3Client.putObject(awsS3Property.bucket, s3FileName, inputStream, objMeta)
         return s3Client.getUrl(awsS3Property.bucket, awsS3Property.dir + s3FileName).toString()
