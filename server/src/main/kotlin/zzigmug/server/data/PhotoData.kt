@@ -7,18 +7,20 @@ import zzigmug.server.entity.Photo
 import java.time.LocalDateTime
 
 data class PhotoRequestDto (
+    val id: Long,
     val date: LocalDateTime,
     val mealType: MealType,
 )
 
 data class PhotoResponseDto (
     val id: Long?,
+    val image: String,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    val date: LocalDateTime,
-    val image: String?,
+    val date: LocalDateTime?,
+    val mealType: MealType?,
     val dishList: MutableList<DishResponseDto> = mutableListOf()
 ) {
-    constructor(photo: Photo): this(photo.id, photo.date, photo.image) {
+    constructor(photo: Photo): this(photo.id, photo.image, photo.date, photo.mealType) {
         photo.dishList.forEach {
             this.dishList.add(DishResponseDto(it))
         }

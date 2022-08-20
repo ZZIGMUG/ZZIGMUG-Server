@@ -4,12 +4,16 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
+import zzigmug.server.data.property.AwsS3Property
 import zzigmug.server.data.property.JwtProperty
 import zzigmug.server.data.property.KakaoProperty
 
 @EnableJpaAuditing
 @SpringBootApplication
-@EnableConfigurationProperties(JwtProperty::class, KakaoProperty::class)
+@EnableConfigurationProperties(
+	JwtProperty::class,
+	KakaoProperty::class,
+	AwsS3Property::class)
 class ServerApplication
 
 fun main(args: Array<String>) {

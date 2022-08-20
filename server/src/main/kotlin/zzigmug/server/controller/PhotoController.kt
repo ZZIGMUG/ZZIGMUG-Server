@@ -31,21 +31,37 @@ import javax.servlet.http.HttpServletRequest
 class PhotoController(
     private val photoService: PhotoService,
 ) {
-    @Operation(summary = "사진 등록 API")
+
+    @Operation(summary = "사진에서 음식 추출 API")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = PhotoResponseDto::class))))]),
     ])
-    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE])
-    fun savePhoto(
+    @PostMapping("/extract", consumes = [MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE])
+    fun extractFoodFromPhoto(
         @RequestPart(name = "image") image: MultipartFile,
-        @RequestPart(name = "requestDto") requestDto: PhotoRequestDto,
+        request: HttpServletRequest)
+    : ResponseEntity<Any> {
+        return ResponseEntity
+            .ok()
+            .body(photoService.extractDishesFromPhoto(image))
+    }
+
+
+    @Operation(summary = "사진 저장 API")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "성공", content = [
+            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = PhotoResponseDto::class))))]),
+    ])
+    @PostMapping("/save", consumes = [MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE])
+    fun savePhoto(
+        @RequestBody requestDto: PhotoRequestDto,
         request: HttpServletRequest): ResponseEntity<Any> {
         val userEmail = request.userPrincipal.name
 
         return ResponseEntity
             .ok()
-            .body(photoService.extractDishesFromPhoto(image, requestDto, userEmail))
+            .body(photoService.savePhoto(requestDto, userEmail))
     }
 
     @Operation(summary = "날짜로 사진 조회 API")

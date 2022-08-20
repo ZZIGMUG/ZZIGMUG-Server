@@ -1,2 +1,4 @@
 
 server/src/main/resources/application.yml
+
+server/logs/logback.log

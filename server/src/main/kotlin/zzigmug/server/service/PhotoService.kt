@@ -22,11 +22,27 @@ class PhotoService(
     private val dishService: DishService,
     private val awsS3Service: AwsS3Service,
 ) {
+
     @Transactional
-    fun extractDishesFromPhoto(image: MultipartFile, requestDto: PhotoRequestDto, userId: String): PhotoResponseDto {
+    fun savePhoto(requestDto: PhotoRequestDto, userId: String): PhotoResponseDto {
+        val photo = photoRepository.findById(requestDto.id).orElseThrow {
+            throw CustomException(ResponseCode.PHOTO_NOT_FOUND)
+        }
+        val user = userRepository.findByEmail(userId)?:
+            throw CustomException(ResponseCode.USER_NOT_FOUND)
+
+        photo.date = requestDto.date
+        photo.mealType = requestDto.mealType
+        photo.user = user
+        photoRepository.save(photo)
+
+        return PhotoResponseDto(photo)
+    }
+
+    @Transactional
+    fun extractDishesFromPhoto(image: MultipartFile): PhotoResponseDto {
         val imageUrl = awsS3Service.upload(image.inputStream, image.originalFilename!!, image.size)
-        val user = userRepository.findByEmail(userId)?: throw CustomException(ResponseCode.USER_NOT_FOUND)
-        val photo = Photo(user, requestDto.date, imageUrl, requestDto.mealType)
+        val photo = Photo(null, null, imageUrl, null)
         photoRepository.save(photo)
 
         // image를 ML server로 보내 음식 추출
@@ -80,7 +96,7 @@ class PhotoService(
         var index = 0
 
         loop@ while(!currentDate.isAfter(date)) {
-            if (photos[index].date.isAfter(currentDate.atTime(23, 59, 59))) {
+            if (photos[index].date!!.isAfter(currentDate.atTime(23, 59, 59))) {
                 responseList.add(CalorieResponseDto(currentDate, calories, breakfast, lunch, dinner))
 
                 currentDate = currentDate.plusDays(1)
@@ -91,8 +107,8 @@ class PhotoService(
                 continue
             }
 
-            val isEqualDate = photos[index].date.isAfter(currentDate.atStartOfDay())
-                    && photos[index].date.isBefore(currentDate.atTime(23, 59, 59))
+            val isEqualDate = photos[index].date!!.isAfter(currentDate.atStartOfDay())
+                    && photos[index].date!!.isBefore(currentDate.atTime(23, 59, 59))
 
             while (isEqualDate) {
                 println(currentDate)
