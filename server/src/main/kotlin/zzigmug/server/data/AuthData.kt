@@ -16,3 +16,18 @@ data class JoinRequestDto (
     var goal: Int,
     var gender: GenderType
 )
+
+data class EmailJoinRequestDto (
+    var email: String,
+    var password: String,
+    var nickname: String,
+    var height: Int,
+    var weight: Int,
+    var goal: Int,
+    var gender: GenderType,
+)
+
+data class LoginRequestDto (
+    var email: String,
+    var password: String,
+)

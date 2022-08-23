@@ -11,7 +11,9 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import zzigmug.server.data.EmailJoinRequestDto
 import zzigmug.server.data.JoinRequestDto
+import zzigmug.server.data.LoginRequestDto
 import zzigmug.server.data.LoginResponseDto
 import zzigmug.server.service.AuthService
 import zzigmug.server.utils.exception.ErrorResponse
@@ -36,7 +38,33 @@ class AuthController(
             .body(authService.kakaoLogin(code))
     }
 
-    @Operation(summary = "회원가입 API")
+    @Operation(summary = "이메일 회원가입")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "회원가입 & 로그인 성공", content = [
+            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = LoginResponseDto::class))))]),
+        ApiResponse(responseCode = "409", description = "이미 같은 이름을 사용하는 유저가 존재합니다.", content = [
+            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ErrorResponse::class))))])])
+    @PostMapping("/join/email")
+    fun emailJoin(@Parameter(description = "가입할 유저 정보") @RequestBody requestDto: EmailJoinRequestDto): ResponseEntity<Any> {
+        return ResponseEntity
+            .ok()
+            .body(authService.emailJoin(requestDto))
+    }
+
+    @Operation(summary = "이메일 로그인")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "로그인 성공", content = [
+            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = LoginResponseDto::class))))]),
+        ApiResponse(responseCode = "401", description = "이메일 또는 비밀번호를 틀렸습니다.", content = [
+            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ErrorResponse::class))))])])
+    @PostMapping("/login/email")
+    fun emailLogin(@Parameter(description = "로그인할 유저 정보") @RequestBody requestDto: LoginRequestDto): ResponseEntity<Any> {
+        return ResponseEntity
+            .ok()
+            .body(authService.emailLogin(requestDto))
+    }
+
+    @Operation(summary = "카카오 회원의 회원가입 API")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "회원가입 성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = LoginResponseDto::class))))]),
@@ -44,7 +72,7 @@ class AuthController(
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ErrorResponse::class))))]
         ),
     ])
-    @PostMapping("/join")
+    @PostMapping("/join/kakao")
     fun join(@RequestBody requestDto: JoinRequestDto): ResponseEntity<Any> {
         return ResponseEntity
             .ok()

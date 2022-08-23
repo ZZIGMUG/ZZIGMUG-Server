@@ -11,12 +11,15 @@ import javax.persistence.EnumType
 import javax.persistence.Enumerated
 
 @Entity
-class User (
+class User(
     @Column
     var nickname: String? = null,
 
     @Column(unique = true)
     var email: String,
+
+    @Column
+    var pw: String = "",
 
     @Column
     var height: Int? = null,
@@ -53,8 +56,8 @@ class User (
         return null
     }
 
-    override fun getPassword(): String? {
-        return null
+    override fun getPassword(): String {
+        return pw
     }
 
     override fun getUsername(): String {

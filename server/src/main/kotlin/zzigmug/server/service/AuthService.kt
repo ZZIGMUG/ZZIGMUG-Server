@@ -1,5 +1,6 @@
 package zzigmug.server.service
 
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import zzigmug.server.config.jwt.JwtTokenProvider
@@ -17,7 +18,43 @@ class AuthService (
     private val userRepository: UserRepository,
     private val kakaoOAuth2: KakaoOAuth2,
     private val jwtTokenProvider: JwtTokenProvider,
+    private val passwordEncoder: PasswordEncoder,
 ){
+    fun emailJoin(requestDto: EmailJoinRequestDto): LoginResponseDto {
+        if (userRepository.existsByEmail(requestDto.email)) throw CustomException(ResponseCode.EMAIL_DUPLICATED)
+
+        val user = User(
+            email = requestDto.email,
+            pw = passwordEncoder.encode(requestDto.password),
+            role = RoleType.ROLE_GUEST,
+            loginType = LoginType.EMAIL,
+            nickname = requestDto.nickname,
+            gender = requestDto.gender,
+            goal = requestDto.goal,
+            height = requestDto.height,
+            weight = requestDto.weight
+        )
+        userRepository.save(user)
+
+        return LoginResponseDto(
+            accessToken = createToken(user.email),
+            refreshToken = null,
+            userInfo = UserInfo(user)
+        )
+    }
+
+    fun emailLogin(requestDto: LoginRequestDto): LoginResponseDto {
+        val user = (userRepository.findByEmail(requestDto.email)) ?: throw CustomException(ResponseCode.LOGIN_FAIL)
+
+        if (!passwordEncoder.matches(requestDto.password, user.pw))
+            throw CustomException(ResponseCode.LOGIN_FAIL)
+
+        return LoginResponseDto(
+            accessToken = createToken(user.email),
+            refreshToken = null,
+            userInfo = UserInfo(user)
+        )
+    }
 
     fun kakaoLogin(authorizedCode: String): LoginResponseDto {
         val userInfo = kakaoOAuth2.getUserInfo(authorizedCode)
@@ -64,9 +101,9 @@ class AuthService (
     fun validateNickname(input: String): ResponseCode {
         val nickname = input.replace(" ", "")
         val exp = Regex("^[가-힣ㄱ-ㅎ ㅏ-ㅣ a-zA-Z0-9 -]{2,12}\$")
-        if (!exp.matches(nickname)) return ResponseCode.USER_NICKNAME_INCORRECT
+        if (!exp.matches(nickname)) return ResponseCode.NICKNAME_INCORRECT
 
-        if (userRepository.existsByNickname(nickname)) return ResponseCode.USER_NICKNAME_DUPLICATED
+        if (userRepository.existsByNickname(nickname)) return ResponseCode.NICKNAME_DUPLICATED
         return ResponseCode.OK
     }
 

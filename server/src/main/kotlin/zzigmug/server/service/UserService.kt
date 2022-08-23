@@ -38,7 +38,7 @@ class UserService(
 
     fun editNickname(email: String, nickname: String): UserInfo {
         if (authService.validateNickname(nickname) != ResponseCode.OK)
-            throw CustomException(ResponseCode.USER_NICKNAME_INCORRECT)
+            throw CustomException(ResponseCode.NICKNAME_INCORRECT)
 
         val user = userRepository.findByEmail(email) ?: throw CustomException(ResponseCode.USER_NOT_FOUND)
         user.nickname = nickname
