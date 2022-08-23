@@ -6,12 +6,14 @@ import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.stereotype.Repository
 import zzigmug.server.entity.Follow
 import zzigmug.server.entity.QFollow
+import zzigmug.server.entity.QUser
 import zzigmug.server.entity.User
 import zzigmug.server.repository.QuerydslCustomRepositorySupport
 
 @Repository
 class FollowDslRepositoryImpl: QuerydslCustomRepositorySupport(Follow::class.java), FollowDslRepository {
     val follow = QFollow("follow")
+    val user = QUser("user")
 
     override fun findAllFollower(pageable: Pageable, user: User): Page<User> {
         val followers = select(follow.follower)
@@ -19,7 +21,7 @@ class FollowDslRepositoryImpl: QuerydslCustomRepositorySupport(Follow::class.jav
             .where(follow.following.eq(user))
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
-            .orderBy(follow.id.desc())
+            .orderBy(follow.following.numberOfDays.desc())
             .fetch()
 
         val countQuery = select(follow.follower)

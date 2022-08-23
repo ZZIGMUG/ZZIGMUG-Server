@@ -27,6 +27,9 @@ class User (
     @Column
     var goal: Int? = null,
 
+    @Column
+    var numberOfDays: Int = 0,
+
     @Enumerated(EnumType.STRING)
     @Column
     var gender: GenderType? = null,

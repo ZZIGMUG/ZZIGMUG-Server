@@ -23,6 +23,7 @@ class PhotoService(
     private val awsS3Service: AwsS3Service,
 ) {
 
+    //TODO: numberOfDays 증가 코드 필요
     @Transactional
     fun savePhoto(requestDto: PhotoRequestDto, userId: String): PhotoResponseDto {
         val photo = photoRepository.findById(requestDto.id).orElseThrow {

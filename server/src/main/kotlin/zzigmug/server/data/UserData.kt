@@ -43,6 +43,7 @@ data class UserFollowingDto(
     var id: Long?,
     var nickname: String?,
     var exp: Long,
+    var numberOfDays: Int,
 ) {
-    constructor(user: User): this(user.id, user.nickname, user.exp)
+    constructor(user: User): this(user.id, user.nickname, user.exp, user.numberOfDays)
 }
