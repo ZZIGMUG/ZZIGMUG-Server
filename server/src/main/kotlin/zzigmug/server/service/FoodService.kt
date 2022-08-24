@@ -18,7 +18,6 @@ class FoodService(
 
     @Transactional
     fun createFood(requestDto: FoodRequestDto): FoodResponseDto {
-
         if (foodRepository.existsByName(requestDto.name)) {
             throw CustomException(ResponseCode.FOOD_DUPLICATED)
         }

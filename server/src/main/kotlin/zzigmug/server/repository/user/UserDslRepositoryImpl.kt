@@ -15,7 +15,10 @@ class UserDslRepositoryImpl: QuerydslCustomRepositorySupport(User::class.java), 
 
     override fun findAllUserBySearch(pageable: Pageable, queryParams: MutableMap<String, String>): Page<User> {
         val users = selectFrom(user)
-            .where(nicknameLike(queryParams["keyword"]))
+            .where(
+                nicknameLike(queryParams["keyword"]),
+                emailLike(queryParams["email"]),
+            )
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
             .orderBy(user.id.desc())
@@ -30,6 +33,13 @@ class UserDslRepositoryImpl: QuerydslCustomRepositorySupport(User::class.java), 
     private fun nicknameLike(keyword: String?): BooleanExpression? {
         return if (!keyword.isNullOrEmpty()) {
             user.nickname.like("%$keyword%")
+        }
+        else null
+    }
+
+    private fun emailLike(keyword: String?): BooleanExpression? {
+        return if (!keyword.isNullOrEmpty()) {
+            user.email.like("%$keyword%")
         }
         else null
     }
