@@ -63,7 +63,7 @@ class AuthService (
 
         // 신규 회원인 경우
         if (user == null) {
-            val newUser = User(email = email, role = RoleType.ROLE_GUEST, loginType = LoginType.KAKAO)
+            val newUser = User(email = email, role = RoleType.ROLE_GUEST, loginType = LoginType.KAKAO, numberOfDays = 0)
             userRepository.save(newUser)
             return LoginResponseDto(
                 accessToken = null,

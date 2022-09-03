@@ -65,9 +65,7 @@ class SecurityConfig(
                 "/webjars/**",
                 "/v2/api-docs",
                 "/v3/api-docs/**",
-                "/login/kakao/callback",
-                "/join",
-                "/check/nickname",
+                "/auth/**",
             ).permitAll()
 
             .and()

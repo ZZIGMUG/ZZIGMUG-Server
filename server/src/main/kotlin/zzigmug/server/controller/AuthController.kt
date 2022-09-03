@@ -21,22 +21,11 @@ import zzigmug.server.utils.exception.ResponseCode
 import zzigmug.server.utils.exception.ResponseMessage
 
 @Tag(name = "auth", description = "로그인/회원가입 API")
+@RequestMapping("/auth")
 @RestController
 class AuthController(
     private val authService: AuthService
 ) {
-
-    @Operation(summary = "카카오 로그인 콜백 API")
-    @ApiResponses(value = [
-        ApiResponse(responseCode = "200", description = "회원가입/로그인 성공", content = [
-            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = LoginResponseDto::class))))]),
-    ])
-    @GetMapping("/login/kakao/callback")
-    fun kakaoLogin(code: String): ResponseEntity<Any> {
-        return ResponseEntity
-            .ok()
-            .body(authService.kakaoLogin(code))
-    }
 
     @Operation(summary = "이메일 회원가입")
     @ApiResponses(value = [
@@ -62,6 +51,18 @@ class AuthController(
         return ResponseEntity
             .ok()
             .body(authService.emailLogin(requestDto))
+    }
+
+    @Operation(summary = "카카오 로그인 콜백 API")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "회원가입/로그인 성공", content = [
+            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = LoginResponseDto::class))))]),
+    ])
+    @GetMapping("/login/kakao/callback")
+    fun kakaoLogin(code: String): ResponseEntity<Any> {
+        return ResponseEntity
+            .ok()
+            .body(authService.kakaoLogin(code))
     }
 
     @Operation(summary = "카카오 회원의 회원가입 API")
