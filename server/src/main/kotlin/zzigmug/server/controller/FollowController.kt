@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest
 class FollowController(
     private val followService: FollowService
 ) {
-    @Operation(summary = "팔로우 API")
+    @Operation(summary = "팔로우 API", description = "파라미터로 넘어온 ID의 회원을 팔로우합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ResponseMessage::class))))]),
@@ -50,7 +50,7 @@ class FollowController(
             .body(ResponseMessage(HttpStatus.OK.value(), "성공"))
     }
 
-    @Operation(summary = "언팔로우 API")
+    @Operation(summary = "언팔로우 API", description = "파라미터로 넘어온 ID의 회원을 언팔로우합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ResponseMessage::class))))]),
@@ -72,35 +72,39 @@ class FollowController(
             .body(ResponseMessage(HttpStatus.OK.value(), "성공"))
     }
 
-    @Operation(summary = "팔로워 목록 조회 API")
+    @Operation(summary = "팔로워 목록 조회 API", description = "나를 팔로우하는 회원 리스트를 조회합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = UserFollowingDto::class))))]),
             ])
     @GetMapping("/follower")
-    fun readAllFollower(@Parameter(description = "검색 조건") @RequestParam params: MutableMap<String, String>): ResponseEntity<Any> {
-        val userId = params["userId"]?.toLong() ?: throw CustomException(ResponseCode.BAD_REQUEST)
-        val page = params["page"]?.toInt() ?: 0
-        val size = params["size"]?.toInt() ?: 10
+    fun readAllFollower(
+        @Parameter(description = "몇 번째 페이지") @RequestParam(required = false) page: Int = 0,
+        @Parameter(description = "페이지 크기") @RequestParam(required = false) size: Int = 10,
+        request: HttpServletRequest
+    ): ResponseEntity<Any> {
+        val email = request.userPrincipal.name
 
         return ResponseEntity
             .ok()
-            .body(followService.readAllFollower(PageRequest.of(page, size), userId))
+            .body(followService.readAllFollower(PageRequest.of(page, size), email))
     }
 
-    @Operation(summary = "팔로잉 목록 조회 API")
+    @Operation(summary = "팔로잉 목록 조회 API", description = "내가 팔로우 중인 회원 리스트를 조회합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = UserFollowingDto::class))))]),
     ])
     @GetMapping("/following")
-    fun readAllFollowing(@Parameter(description = "검색 조건") @RequestParam params: MutableMap<String, String>): ResponseEntity<Any> {
-        val userId = params["userId"]?.toLong() ?: throw CustomException(ResponseCode.BAD_REQUEST)
-        val page = params["page"]?.toInt() ?: 0
-        val size = params["size"]?.toInt() ?: 10
+    fun readAllFollowing(
+        @Parameter(description = "몇 번째 페이지") @RequestParam(required = false) page: Int = 0,
+        @Parameter(description = "페이지 크기") @RequestParam(required = false) size: Int = 10,
+        request: HttpServletRequest
+    ): ResponseEntity<Any> {
+        val email = request.userPrincipal.name
 
         return ResponseEntity
             .ok()
-            .body(followService.readAllFollowing(PageRequest.of(page, size), userId))
+            .body(followService.readAllFollowing(PageRequest.of(page, size), email))
     }
 }

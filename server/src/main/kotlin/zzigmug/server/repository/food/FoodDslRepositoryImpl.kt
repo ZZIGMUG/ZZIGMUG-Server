@@ -11,16 +11,16 @@ import zzigmug.server.repository.QuerydslCustomRepositorySupport
 class FoodDslRepositoryImpl: QuerydslCustomRepositorySupport(Food::class.java), FoodDslRepository {
     private val food: QFood = QFood("food")
 
-    override fun findAllFoodBySearch(pageable: Pageable, queryParams: MutableMap<String, String>): Page<Food> {
+    override fun findAllFoodBySearch(pageable: Pageable, keyword: String?): Page<Food> {
         val foods = selectFrom(food)
-            .where(nameLike(queryParams["keyword"]))
+            .where(nameLike(keyword))
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
             .orderBy(food.id.desc())
             .fetch()
 
         val countQuery = selectFrom(food)
-            .where(nameLike(queryParams["keyword"]))
+            .where(nameLike(keyword))
 
         return PageableExecutionUtils.getPage(foods, pageable, countQuery::fetchCount)
     }

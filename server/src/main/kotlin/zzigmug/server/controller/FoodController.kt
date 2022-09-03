@@ -30,7 +30,7 @@ class FoodController(
     private val foodService: FoodService,
 ) {
 
-    @Operation(summary = "음식 추가 API")
+    @Operation(summary = "음식 추가 API", description = "음식 및 칼로리 정보를 추가합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ResponseMessage::class))))]),
@@ -42,22 +42,24 @@ class FoodController(
             .body(foodService.createFood(requestDto))
     }
 
-    @Operation(summary = "음식 목록 조회 API")
+    @Operation(summary = "음식 목록 조회 API", description = "음식 및 칼로리 정보를 조회합니다. keyword 파라미터에 들어간 데이터가 없을 시 전체 리스트를 조회합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ResponseMessage::class))))]),
     ])
     @GetMapping
-    fun readFoodList(@Parameter(description = "검색 조건") @RequestParam params: MutableMap<String, String>): ResponseEntity<Any> {
-        val page = params["page"]?.toInt() ?: 0
-        val size = params["size"]?.toInt() ?: 10
+    fun readFoodList(
+        @Parameter(description = "몇 번째 페이지 (0부터 시작)") @RequestParam(required = false) page: Int = 0,
+        @Parameter(description = "페이지 크기") @RequestParam(required = false) size: Int = 10,
+        @Parameter(description = "검색 키워드") @RequestParam keyword: String?
+    ): ResponseEntity<Any> {
 
         return ResponseEntity
             .ok()
-            .body(foodService.readAll(PageRequest.of(page, size), params))
+            .body(foodService.readAll(PageRequest.of(page, size), keyword))
     }
 
-    @Operation(summary = "음식 삭제 API")
+    @Operation(summary = "음식 삭제 API", description = "음식 및 칼로리 정보를 삭제합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ResponseMessage::class))))]),

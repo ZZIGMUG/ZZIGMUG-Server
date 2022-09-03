@@ -27,7 +27,7 @@ class AuthController(
     private val authService: AuthService
 ) {
 
-    @Operation(summary = "이메일 회원가입")
+    @Operation(summary = "이메일 회원가입", description = "이메일과 패스워드 및 회원 개인 정보를 입력받아 회원가입을 진행합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "회원가입 & 로그인 성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = LoginResponseDto::class))))]),
@@ -40,7 +40,7 @@ class AuthController(
             .body(authService.emailJoin(requestDto))
     }
 
-    @Operation(summary = "이메일 로그인")
+    @Operation(summary = "이메일 로그인", description = "이메일과 패스워드로 로그인합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "로그인 성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = LoginResponseDto::class))))]),
@@ -53,7 +53,7 @@ class AuthController(
             .body(authService.emailLogin(requestDto))
     }
 
-    @Operation(summary = "카카오 로그인 콜백 API")
+    @Operation(summary = "카카오 로그인 콜백 API", description = "카카오 OAUTH 사이트로부터 요청 받는 콜백 API입니다. (클라이언트는 필요 X) ")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "회원가입/로그인 성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = LoginResponseDto::class))))]),
@@ -65,7 +65,7 @@ class AuthController(
             .body(authService.kakaoLogin(code))
     }
 
-    @Operation(summary = "카카오 회원의 회원가입 API")
+    @Operation(summary = "카카오 회원의 회원가입 API", description = "카카오 회원가입 유저로부터 회원가입 단계에서 입력받은 회원정보로 최종 회원가입을 진행합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "회원가입 성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = LoginResponseDto::class))))]),
@@ -80,7 +80,7 @@ class AuthController(
             .body(authService.join(requestDto))
     }
 
-    @Operation(summary = "닉네임 중복확인")
+    @Operation(summary = "닉네임 중복확인", description = "닉네임 중복 여부를 확인합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "사용 가능한 닉네임입니다.", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ResponseMessage::class))))]),

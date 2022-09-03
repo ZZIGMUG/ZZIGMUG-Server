@@ -6,5 +6,5 @@ import zzigmug.server.entity.Food
 import zzigmug.server.entity.User
 
 interface FoodDslRepository {
-    fun findAllFoodBySearch(pageable: Pageable, queryParams: MutableMap<String, String>): Page<Food>
+    fun findAllFoodBySearch(pageable: Pageable, keyword: String?): Page<Food>
 }

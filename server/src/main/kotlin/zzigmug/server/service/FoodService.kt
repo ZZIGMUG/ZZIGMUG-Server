@@ -35,9 +35,9 @@ class FoodService(
     }
 
     @Transactional(readOnly = true)
-    fun readAll(pageable: Pageable, queryParams: MutableMap<String, String>): FoodPage {
+    fun readAll(pageable: Pageable, keyword: String?): FoodPage {
         val foodList = mutableListOf<FoodResponseDto>()
-        val pages = foodRepository.findAllFoodBySearch(pageable, queryParams)
+        val pages = foodRepository.findAllFoodBySearch(pageable, keyword)
 
         pages.forEach {
             foodList.add(FoodResponseDto(it))

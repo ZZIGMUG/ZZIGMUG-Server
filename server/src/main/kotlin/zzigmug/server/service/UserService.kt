@@ -25,9 +25,9 @@ class UserService(
     }
 
     @Transactional(readOnly = true)
-    fun readAll(pageable: Pageable, queryParams: MutableMap<String, String>): UserPage {
+    fun readAll(pageable: Pageable, keyword: String?): UserPage {
         val userList = mutableListOf<UserInfo>()
-        val pages = userRepository.findAllUserBySearch(pageable, queryParams)
+        val pages = userRepository.findAllUserBySearch(pageable, keyword)
 
         pages.forEach {
             userList.add(UserInfo(it))

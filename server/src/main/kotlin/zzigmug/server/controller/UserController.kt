@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletRequest
 class UserController(
     private val userService: UserService,
 ) {
-    @Operation(summary = "ID로 회원 조회 API")
+    @Operation(summary = "ID로 회원 조회 API", description = "ID로 회원을 조회합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = UserInfo::class))))]),
@@ -44,24 +44,24 @@ class UserController(
             .body(userService.readUserById(userId))
     }
 
-    @Operation(summary = "회원 리스트 조회 API")
+    @Operation(summary = "회원 리스트 조회 API", description = "키워드로 이메일과 닉네임을 검색해 회원 리스트를 조회합니다. (검색 키워드가 없을 시 전체 회원 리스트를 조회합니다.)")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = UserPage::class))))]),
     ])
     @GetMapping("/list")
     fun searchUser(
-        @Parameter(description = "검색 조건") @RequestParam params: MutableMap<String, String>
-    ): ResponseEntity<Any> {
-        val page = params["page"]?.toInt() ?: 0
-        val size = params["size"]?.toInt() ?: 10
+        @Parameter(description = "몇 번째 페이지") @RequestParam(required = false) page: Int = 0,
+        @Parameter(description = "페이지 크기") @RequestParam(required = false) size: Int = 10,
+        @Parameter(description = "검색 키워드") @RequestParam(required = false) keyword: String?,
+        ): ResponseEntity<Any> {
 
         return ResponseEntity
             .ok()
-            .body(userService.readAll(PageRequest.of(page, size), params))
+            .body(userService.readAll(PageRequest.of(page, size), keyword))
     }
 
-    @Operation(summary = "닉네임 수정 API")
+    @Operation(summary = "닉네임 수정 API", description = "회원의 닉네임을 수정합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ResponseMessage::class))))]),

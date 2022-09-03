@@ -42,10 +42,8 @@ class FollowService(
         followRepository.delete(follow)
     }
 
-    fun readAllFollower(pageable: Pageable, userId: Long): MutableList<UserFollowingDto> {
-        val user = userRepository.findById(userId).orElseThrow {
-            throw CustomException(ResponseCode.USER_NOT_FOUND)
-        }
+    fun readAllFollower(pageable: Pageable, email: String): MutableList<UserFollowingDto> {
+        val user = userRepository.findByEmail(email) ?: throw CustomException(ResponseCode.USER_NOT_FOUND)
         val response = mutableListOf<UserFollowingDto>()
 
         followRepository.findAllFollower(pageable, user).forEach {
@@ -54,10 +52,8 @@ class FollowService(
         return response
     }
 
-    fun readAllFollowing(pageable: Pageable, userId: Long): MutableList<UserFollowingDto> {
-        val user = userRepository.findById(userId).orElseThrow {
-            throw CustomException(ResponseCode.USER_NOT_FOUND)
-        }
+    fun readAllFollowing(pageable: Pageable, email: String): MutableList<UserFollowingDto> {
+        val user = userRepository.findByEmail(email) ?: throw CustomException(ResponseCode.USER_NOT_FOUND)
         val response = mutableListOf<UserFollowingDto>()
 
         followRepository.findAllFollowing(pageable, user).forEach {

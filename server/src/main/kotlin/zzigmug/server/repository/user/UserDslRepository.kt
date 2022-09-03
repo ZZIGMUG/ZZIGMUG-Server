@@ -5,5 +5,5 @@ import org.springframework.data.domain.Pageable
 import zzigmug.server.entity.User
 
 interface UserDslRepository {
-    fun findAllUserBySearch(pageable: Pageable, queryParams: MutableMap<String, String>): Page<User>
+    fun findAllUserBySearch(pageable: Pageable, keyword: String?): Page<User>
 }

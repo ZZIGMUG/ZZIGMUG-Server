@@ -13,11 +13,11 @@ import zzigmug.server.repository.QuerydslCustomRepositorySupport
 class UserDslRepositoryImpl: QuerydslCustomRepositorySupport(User::class.java), UserDslRepository {
     private val user: QUser = QUser("user")
 
-    override fun findAllUserBySearch(pageable: Pageable, queryParams: MutableMap<String, String>): Page<User> {
+    override fun findAllUserBySearch(pageable: Pageable, keyword: String?): Page<User> {
         val users = selectFrom(user)
             .where(
-                nicknameLike(queryParams["keyword"]),
-                emailLike(queryParams["email"]),
+                nicknameLike(keyword),
+                emailLike(keyword),
             )
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
@@ -25,7 +25,10 @@ class UserDslRepositoryImpl: QuerydslCustomRepositorySupport(User::class.java), 
             .fetch()
 
         val countQuery = selectFrom(user)
-            .where(nicknameLike(queryParams["keyword"]))
+            .where(
+                nicknameLike(keyword),
+                emailLike(keyword)
+            )
 
         return PageableExecutionUtils.getPage(users, pageable, countQuery::fetchCount)
     }

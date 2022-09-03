@@ -26,7 +26,7 @@ class DishController(
     private val dishService: DishService,
 ) {
 
-    @Operation(summary = "식사 정보 추가 API")
+    @Operation(summary = "식사 정보 추가 API", description = "AI가 사진에서 발견하지 못한 음식을 사용자가 직접 등록할 수 있도록 합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = DishResponseDto::class))))]),
@@ -35,15 +35,15 @@ class DishController(
     ])
     @PostMapping
     fun createDish(
-        @Parameter(description = "식사가 담긴 사진 ID") @RequestParam photoId: Long,
-        @RequestBody requestDto: DishRequestDto
+        @Parameter(description = "사진 ID") @RequestParam photoId: Long,
+        @Parameter(description = "추가하고 싶은 식사 정보") @RequestBody requestDto: DishRequestDto
     ): ResponseEntity<Any> {
         return ResponseEntity
             .ok()
             .body(dishService.saveDish(photoId, requestDto))
     }
 
-    @Operation(summary = "식사량 수정 API")
+    @Operation(summary = "식사량 수정 API", description = "식사의 양(1인분, 0.5인분 등)을 수정합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ResponseMessage::class))))]),
@@ -53,7 +53,7 @@ class DishController(
     @PatchMapping
     fun editCount(
         @Parameter(description = "수정할 식사 ID") @RequestParam dishId: Long,
-        @RequestBody requestDto: DishUpdateDto
+        @Parameter(description = "수정할 식사 정보") @RequestBody requestDto: DishUpdateDto
     ): ResponseEntity<Any> {
         dishService.editDish(dishId, requestDto)
 
@@ -62,7 +62,7 @@ class DishController(
             .body(ResponseMessage(status = HttpStatus.OK.value(), data = "사용 가능한 닉네임입니다."))
     }
 
-    @Operation(summary = "식사 정보 삭제 API")
+    @Operation(summary = "식사 정보 삭제 API", description = "사진 속의 식사 정보를 삭제합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ResponseMessage::class))))]),
