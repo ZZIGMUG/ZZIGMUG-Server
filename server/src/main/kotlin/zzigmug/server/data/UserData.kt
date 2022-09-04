@@ -15,6 +15,7 @@ data class UserInfo(
     var gender: GenderType?,
     var agree_marketing: Boolean,
     var exp: Long,
+    var numberOfDays: Int,
     var role: RoleType,
     var loginType: LoginType,
 ) {
@@ -28,6 +29,7 @@ data class UserInfo(
         user.gender,
         user.agree_marketing,
         user.exp,
+        user.numberOfDays,
         user.role,
         user.loginType
     )
