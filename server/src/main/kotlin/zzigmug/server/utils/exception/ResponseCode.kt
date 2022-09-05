@@ -2,6 +2,8 @@ package zzigmug.server.utils.exception
 
 import org.springframework.http.HttpStatus
 
+
+// TODO: ResponseTemplate 클래스 추가
 enum class ResponseCode(
     val httpStatus: HttpStatus,
     val message: String,

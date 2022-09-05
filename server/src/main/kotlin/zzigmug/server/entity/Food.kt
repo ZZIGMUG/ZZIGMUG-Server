@@ -10,20 +10,24 @@ class Food (
     var name: String,
 
     @Column
+    var englishName: String,
+
+    @Column
     var calories: Int,
 
     @Column
-    var carbohydrate: Int,
+    var carbohydrate: Double,
 
     @Column
-    var fat: Int,
+    var fat: Double,
 
     @Column
-    var protein: Int,
+    var protein: Double,
 
     ): BaseEntity() {
     constructor(requestDto: FoodRequestDto): this(
         name = requestDto.name,
+        englishName = requestDto.englishName,
         calories = requestDto.calories,
         carbohydrate = requestDto.carbohydrate,
         fat = requestDto.fat,

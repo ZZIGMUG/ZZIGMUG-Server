@@ -4,19 +4,20 @@ import zzigmug.server.entity.Food
 
 data class FoodRequestDto(
     var name: String,
+    var englishName: String,
     var calories: Int,
-    var carbohydrate: Int,
-    var protein: Int,
-    var fat: Int
+    var carbohydrate: Double,
+    var protein: Double,
+    var fat: Double
 )
 
 data class FoodResponseDto(
     var id: Long?,
     var name: String,
     var calories: Int,
-    var carbohydrate: Int,
-    var protein: Int,
-    var fat: Int
+    var carbohydrate: Double,
+    var protein: Double,
+    var fat: Double
 ) {
     constructor(food: Food): this(food.id, food.name, food.calories, food.carbohydrate, food.protein, food.fat)
 }

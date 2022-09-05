@@ -51,7 +51,7 @@ class PhotoService(
 
         val dishList = mutableListOf<DishResponseDto>()
         foodNames.forEach {
-            val food = foodRepository.findByName(it) ?: foodRepository.save(Food(it, 0, 0, 0, 0))
+            val food = foodRepository.findByName(it) ?: foodRepository.save(Food(it, "", 0, 0.0, 0.0, 0.0))
             dishService.saveDish(photo.id!!, DishRequestDto(food.id!!, 1.0))
         }
 

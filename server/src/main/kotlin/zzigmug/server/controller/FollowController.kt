@@ -42,6 +42,7 @@ class FollowController(
     ])
     @PostMapping
     fun followUser(@Parameter(description = "팔로우할 유저 ID") @RequestParam followingId: Long, request: HttpServletRequest): ResponseEntity<Any> {
+        // TODO: 스스로 팔로우 금지하는 코드 추가
         val userEmail = request.userPrincipal.name
         followService.followUser(followingId, userEmail)
 
