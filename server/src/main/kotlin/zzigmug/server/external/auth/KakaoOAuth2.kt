@@ -16,10 +16,6 @@ class KakaoOAuth2(
     private val restTemplate: RestTemplate,
     private val kakaoProperty: KakaoProperty,
 ) {
-    fun getUserInfo(authorizedCode: String): KakaoUserInfo {
-        val accessToken = getAccessToken(authorizedCode)
-        return getUserInfoByAccessToken(accessToken)
-    }
 
     fun getAccessToken(authorizedCode: String): String {
         val headers = HttpHeaders()
@@ -44,7 +40,7 @@ class KakaoOAuth2(
         return jsonObject.getString("access_token")
     }
 
-    private fun getUserInfoByAccessToken(accessToken: String): KakaoUserInfo {
+    fun getUserInfoByAccessToken(accessToken: String): KakaoUserInfo {
         val headers = HttpHeaders()
         headers.setBearerAuth(accessToken)
         headers.contentType = MediaType.APPLICATION_FORM_URLENCODED

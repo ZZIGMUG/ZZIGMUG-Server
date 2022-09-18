@@ -8,13 +8,9 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import zzigmug.server.data.EmailJoinRequestDto
-import zzigmug.server.data.JoinRequestDto
-import zzigmug.server.data.LoginRequestDto
-import zzigmug.server.data.LoginResponseDto
+import zzigmug.server.data.*
 import zzigmug.server.service.AuthService
 import zzigmug.server.utils.exception.ErrorResponse
 import zzigmug.server.utils.exception.ResponseCode
@@ -53,16 +49,28 @@ class AuthController(
             .body(authService.emailLogin(requestDto))
     }
 
-    @Operation(summary = "카카오 로그인 콜백 API", description = "카카오 OAUTH 사이트로부터 요청 받는 콜백 API입니다. (클라이언트는 필요 X) ")
+    @Operation(summary = "카카오 액세스 토큰 API", description = "카카오 OAUTH 사이트로부터 액세스 토큰을 받는 API입니다. (서버 테스트용) ")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "회원가입/로그인 성공", content = [
+            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = String::class))))]),
+    ])
+    @GetMapping("/login/kakao/callback")
+    fun getKakaoToken(code: String): ResponseEntity<Any> {
+        return ResponseEntity
+            .ok()
+            .body(authService.getKakaoToken(code))
+    }
+
+    @Operation(summary = "카카오 로그인/회원가입 API", description = "카카오 액세스 토큰을 통해 로그인을 진행합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "회원가입/로그인 성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = LoginResponseDto::class))))]),
     ])
-    @GetMapping("/login/kakao/callback")
-    fun kakaoLogin(code: String): ResponseEntity<Any> {
+    @PostMapping("/join/kakao/token")
+    fun kakaoLogin(@RequestBody requestDto: KakaoLoginRequestDto): ResponseEntity<Any> {
         return ResponseEntity
             .ok()
-            .body(authService.kakaoLogin(code))
+            .body(authService.kakaoLogin(requestDto.accessToken))
     }
 
     @Operation(summary = "카카오 회원의 회원가입 API", description = "카카오 회원가입 유저로부터 회원가입 단계에서 입력받은 회원정보로 최종 회원가입을 진행합니다.")
@@ -77,7 +85,7 @@ class AuthController(
     fun join(@RequestBody requestDto: JoinRequestDto): ResponseEntity<Any> {
         return ResponseEntity
             .ok()
-            .body(authService.join(requestDto))
+            .body(authService.kakaoJoin(requestDto))
     }
 
     @Operation(summary = "닉네임 중복확인", description = "닉네임 중복 여부를 확인합니다.")

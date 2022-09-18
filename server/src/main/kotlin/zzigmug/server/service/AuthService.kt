@@ -56,8 +56,12 @@ class AuthService (
         )
     }
 
-    fun kakaoLogin(authorizedCode: String): LoginResponseDto {
-        val userInfo = kakaoOAuth2.getUserInfo(authorizedCode)
+    fun getKakaoToken(authorizedCode: String): String {
+        return kakaoOAuth2.getAccessToken(authorizedCode)
+    }
+
+    fun kakaoLogin(accessToken: String): LoginResponseDto {
+        val userInfo = kakaoOAuth2.getUserInfoByAccessToken(accessToken)
         var email = userInfo.email
         val user = userRepository.findByEmail(email)
 
@@ -79,7 +83,7 @@ class AuthService (
         )
     }
 
-    fun join(requestDto: JoinRequestDto): LoginResponseDto {
+    fun kakaoJoin(requestDto: JoinRequestDto): LoginResponseDto {
         val user = userRepository.findByEmail(requestDto.email)?: throw CustomException(ResponseCode.USER_NOT_FOUND)
 
         user.nickname = requestDto.nickname

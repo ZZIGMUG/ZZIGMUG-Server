@@ -2,6 +2,9 @@ package zzigmug.server.data
 
 import zzigmug.server.data.type.GenderType
 
+data class KakaoLoginRequestDto (
+    var accessToken: String,
+        )
 data class LoginResponseDto(
     var accessToken: String? = null,
     var refreshToken: String? = null,
