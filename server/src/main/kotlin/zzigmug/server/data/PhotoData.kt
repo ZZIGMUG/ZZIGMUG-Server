@@ -12,6 +12,10 @@ data class PhotoRequestDto (
     val mealType: MealType,
 )
 
+data class ExtractResponseDto (
+    val foodList: List<String>
+)
+
 data class PhotoResponseDto (
     val id: Long?,
     val image: String,

@@ -2,6 +2,7 @@ package zzigmug.server.service
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.client.RestTemplate
 import org.springframework.web.multipart.MultipartFile
 import zzigmug.server.data.*
 import zzigmug.server.data.type.MealType
@@ -12,6 +13,7 @@ import zzigmug.server.repository.food.FoodRepository
 import zzigmug.server.repository.user.UserRepository
 import zzigmug.server.utils.exception.CustomException
 import zzigmug.server.utils.exception.ResponseCode
+import java.net.URI
 import java.time.LocalDate
 
 @Service
@@ -21,6 +23,7 @@ class PhotoService(
     private val userRepository: UserRepository,
     private val dishService: DishService,
     private val awsS3Service: AwsS3Service,
+    private val restTemplate: RestTemplate,
 ) {
 
     //TODO: numberOfDays 증가 코드 필요
@@ -47,6 +50,14 @@ class PhotoService(
         photoRepository.save(photo)
 
         // image를 ML server로 보내 음식 추출
+//        val uri = "3.37.60.50:80/items/?imageUrl=$imageUrl"
+//        val responseEntity = restTemplate.getForEntity(uri, ExtractResponseDto::class.java)
+//
+//        responseEntity.body!!.foodList.forEach {
+//            val food = foodRepository.findByEnglishName(it) ?: foodRepository.save(Food(it, it, 0, 0.0, 0.0, 0.0))
+//            dishService.saveDish(photo.id!!, DishRequestDto(food.id!!, 1.0))
+//        }
+
         val foodNames = listOf("바나나", "사과", "오렌지")
 
         val dishList = mutableListOf<DishResponseDto>()

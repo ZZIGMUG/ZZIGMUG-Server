@@ -8,5 +8,5 @@ import org.springframework.web.client.RestTemplate
 @Configuration
 class AppContext {
     @Bean
-    fun restTemplate(): RestTemplate = RestTemplateBuilder().build()
+    fun restTemplate(): RestTemplate = RestTemplate()
 }
