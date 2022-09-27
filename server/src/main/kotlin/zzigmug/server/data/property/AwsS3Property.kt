@@ -7,5 +7,4 @@ import org.springframework.boot.context.properties.ConstructorBinding
 @ConstructorBinding
 data class AwsS3Property (
     val bucket: String,
-    val dir: String,
 )

@@ -19,6 +19,6 @@ class AwsS3Service(
         objMeta.contentLength = fileSize
 
         s3Client.putObject(awsS3Property.bucket, s3FileName, inputStream, objMeta)
-        return s3Client.getUrl(awsS3Property.bucket, awsS3Property.dir + s3FileName).toString()
+        return s3Client.getUrl(awsS3Property.bucket, s3FileName).toString()
     }
 }

@@ -13,7 +13,6 @@ import zzigmug.server.repository.food.FoodRepository
 import zzigmug.server.repository.user.UserRepository
 import zzigmug.server.utils.exception.CustomException
 import zzigmug.server.utils.exception.ResponseCode
-import java.net.URI
 import java.time.LocalDate
 
 @Service
@@ -46,25 +45,26 @@ class PhotoService(
     @Transactional
     fun extractDishesFromPhoto(image: MultipartFile): PhotoResponseDto {
         val imageUrl = awsS3Service.upload(image.inputStream, image.originalFilename!!, image.size)
+        print(imageUrl)
         val photo = Photo(null, null, imageUrl, null)
         photoRepository.save(photo)
 
         // image를 ML server로 보내 음식 추출
-//        val uri = "3.37.60.50:80/items/?imageUrl=$imageUrl"
-//        val responseEntity = restTemplate.getForEntity(uri, ExtractResponseDto::class.java)
-//
-//        responseEntity.body!!.foodList.forEach {
-//            val food = foodRepository.findByEnglishName(it) ?: foodRepository.save(Food(it, it, 0, 0.0, 0.0, 0.0))
-//            dishService.saveDish(photo.id!!, DishRequestDto(food.id!!, 1.0))
-//        }
+        val uri = "http://3dc9-35-198-252-89.ngrok.io/items/?imageUrl=$imageUrl"
+        val responseEntity = restTemplate.getForEntity(uri, ExtractResponseDto::class.java)
 
-        val foodNames = listOf("바나나", "사과", "오렌지")
-
-        val dishList = mutableListOf<DishResponseDto>()
-        foodNames.forEach {
-            val food = foodRepository.findByName(it) ?: foodRepository.save(Food(it, "", 0, 0.0, 0.0, 0.0))
+        responseEntity.body!!.foodList.forEach {
+            val food = foodRepository.findByEnglishName(it) ?: foodRepository.save(Food(it, it, 0, 0.0, 0.0, 0.0))
             dishService.saveDish(photo.id!!, DishRequestDto(food.id!!, 1.0))
         }
+//
+//        val foodNames = listOf("바나나", "사과", "오렌지")
+//
+//        val dishList = mutableListOf<DishResponseDto>()
+//        foodNames.forEach {
+//            val food = foodRepository.findByName(it) ?: foodRepository.save(Food(it, "", 0, 0.0, 0.0, 0.0))
+//            dishService.saveDish(photo.id!!, DishRequestDto(food.id!!, 1.0))
+//        }
 
         return PhotoResponseDto(photo)
     }
