@@ -11,12 +11,15 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import zzigmug.server.config.jwt.*
+import java.util.*
 
 @Configurable
 @EnableWebSecurity
 class SecurityConfig(
-    private val corsConfig: CorsConfig,
     private val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
     private val jwtAccessDeniedHandler: JwtAccessDeniedHandler,
     private val jwtTokenProvider: JwtTokenProvider,
@@ -34,24 +37,20 @@ class SecurityConfig(
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
         http
-            .addFilter(corsConfig.corsFilter())
-            .cors().and()
+            .httpBasic().disable()
+            .cors().configurationSource(corsConfigurationSource())
+        .and()
             .csrf().disable()
-
+            .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
             .exceptionHandling()
             .authenticationEntryPoint(jwtAuthenticationEntryPoint)
             .accessDeniedHandler(jwtAccessDeniedHandler)
-
-            .and()
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
-            .and()
+        .and()
             .formLogin().disable()
-            .httpBasic().disable()
             .headers().frameOptions().disable()
-
-            .and()
+        .and()
             .authorizeRequests()
             .antMatchers(
                 "/h2-console/**",
@@ -67,21 +66,34 @@ class SecurityConfig(
                 "/v3/api-docs/**",
                 "/auth/**",
             ).permitAll()
-
-            .and()
+        .and()
             .authorizeRequests()
             .antMatchers("/admin/**")
             .access("hasAnyRole('ROLE_ADMIN')")
-
-            .and()
+        .and()
             .authorizeRequests()
             .anyRequest()
-            .authenticated()
-
-            .and()
+            .permitAll()
+            //.authenticated()
+        .and()
             .addFilterBefore(JwtFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter::class.java)
     }
 
     @Throws(Exception::class)
     override fun configure(auth: AuthenticationManagerBuilder?) {}
+
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration()
+
+        configuration.allowedOrigins = listOf("*")
+        configuration.allowedHeaders = listOf("*")
+        configuration.allowedMethods = listOf("POST", "GET", "PUT", "PATCH", "DELETE")
+        configuration.allowCredentials = true
+
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuration)
+
+        return source;
+    }
 }
