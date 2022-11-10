@@ -50,21 +50,13 @@ class PhotoService(
         photoRepository.save(photo)
 
         // image를 ML server로 보내 음식 추출
-        val uri = "http://8772-34-143-196-9.ngrok.io/items/?imageUrl=$imageUrl"
+        val uri = "http://533b-35-237-152-198.ngrok.io/items/?imageUrl=$imageUrl"
         val responseEntity = restTemplate.getForEntity(uri, Array<String>::class.java)
 
         responseEntity.body!!.forEach {
             val food = foodRepository.findByEnglishName(it) ?: foodRepository.save(Food(it, it, 0, 0.0, 0.0, 0.0))
             dishService.saveDish(photo.id!!, DishRequestDto(food.id!!, 1.0))
         }
-//
-//        val foodNames = listOf("바나나", "사과", "오렌지")
-//
-//        val dishList = mutableListOf<DishResponseDto>()
-//        foodNames.forEach {
-//            val food = foodRepository.findByName(it) ?: foodRepository.save(Food(it, "", 0, 0.0, 0.0, 0.0))
-//            dishService.saveDish(photo.id!!, DishRequestDto(food.id!!, 1.0))
-//        }
 
         return PhotoResponseDto(photo)
     }

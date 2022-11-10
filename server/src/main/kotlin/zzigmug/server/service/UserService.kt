@@ -26,24 +26,26 @@ class UserService(
 
     @Transactional(readOnly = true)
     fun readAll(pageable: Pageable, keyword: String?): UserPage {
-        val userList = mutableListOf<UserInfo>()
         val pages = userRepository.findAllUserBySearch(pageable, keyword)
 
+        val userInfoList = mutableListOf<UserInfo>()
         pages.forEach {
-            userList.add(UserInfo(it))
+            userInfoList.add(UserInfo(it))
         }
 
-        return UserPage(pages.totalElements, pages.totalPages, userList)
+        return UserPage(pages.totalElements, pages.totalPages, userInfoList)
     }
 
     fun editNickname(email: String, nickname: String): UserInfo {
-        if (authService.validateNickname(nickname) != ResponseCode.OK)
+        if (authService.validateNickname(nickname) != ResponseCode.OK) {
             throw CustomException(ResponseCode.NICKNAME_INCORRECT)
+        }
 
-        val user = userRepository.findByEmail(email) ?: throw CustomException(ResponseCode.USER_NOT_FOUND)
-        user.nickname = nickname
-        userRepository.save(user)
+        val user = userRepository.findByEmail(email)
+            ?: throw CustomException(ResponseCode.USER_NOT_FOUND)
 
-        return UserInfo(user)
+        user.setNickname(nickname)
+
+        return UserInfo(userRepository.save(user))
     }
 }

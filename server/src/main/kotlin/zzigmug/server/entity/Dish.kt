@@ -14,4 +14,8 @@ class Dish (
 
     @Column
     var amount: Double,
-): BaseEntity()
+): BaseEntity() {
+    fun updateAmount(amount: Double) {
+        this.amount = amount
+    }
+}

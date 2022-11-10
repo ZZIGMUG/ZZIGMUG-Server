@@ -2,6 +2,7 @@ package zzigmug.server.entity
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import zzigmug.server.data.EmailJoinRequestDto
 import zzigmug.server.data.type.GenderType
 import zzigmug.server.data.type.LoginType
 import zzigmug.server.data.type.RoleType
@@ -52,6 +53,23 @@ class User(
     var loginType: LoginType,
 
     ): BaseEntity(), UserDetails {
+
+    constructor(requestDto: EmailJoinRequestDto) : this(
+        email = requestDto.email,
+        pw = requestDto.password,
+        role = RoleType.ROLE_GUEST,
+        loginType = LoginType.EMAIL,
+        nickname = requestDto.nickname,
+        gender = requestDto.gender,
+        goal = requestDto.goal,
+        height = requestDto.height,
+        weight = requestDto.weight
+    )
+
+    fun setNickname(nickname: String) {
+        this.nickname = nickname
+    }
+
     override fun getAuthorities(): MutableCollection<out GrantedAuthority>? {
         return null
     }

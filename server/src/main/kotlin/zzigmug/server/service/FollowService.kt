@@ -18,34 +18,38 @@ class FollowService(
 ) {
 
     fun followUser(followingId: Long, userEmail: String) {
-        val user = userRepository.findByEmail(userEmail)?: throw CustomException(ResponseCode.USER_NOT_FOUND)
+        val user = userRepository.findByEmail(userEmail)
+            ?: throw CustomException(ResponseCode.USER_NOT_FOUND)
+
         val followingUser = userRepository.findById(followingId).orElseThrow {
             throw CustomException(ResponseCode.USER_NOT_FOUND)
         }
 
-        if (followRepository.existsByFollowerAndFollowing(user, followingUser))
+        if (followRepository.existsByFollowerAndFollowing(user, followingUser)) {
             throw CustomException(ResponseCode.ALREADY_FOLLOWING)
+        }
 
-        val follow = Follow(user, followingUser)
-        followRepository.save(follow)
+        followRepository.save(Follow(user, followingUser))
     }
 
     fun unfollowUser(followingId: Long, userEmail: String) {
-        val follower = userRepository.findByEmail(userEmail)?: throw CustomException(ResponseCode.USER_NOT_FOUND)
+        val follower = userRepository.findByEmail(userEmail)
+            ?: throw CustomException(ResponseCode.USER_NOT_FOUND)
+
         val following = userRepository.findById(followingId).orElseThrow {
             throw CustomException(ResponseCode.USER_NOT_FOUND)
         }
 
-        val follow = followRepository.findByFollowerAndFollowing(follower, following)?:
-            throw CustomException(ResponseCode.FOLLOW_NOT_FOUND)
+        val follow = followRepository.findByFollowerAndFollowing(follower, following)
+            ?: throw CustomException(ResponseCode.FOLLOW_NOT_FOUND)
 
         followRepository.delete(follow)
     }
 
     fun readAllFollower(pageable: Pageable, email: String): MutableList<UserFollowingDto> {
         val user = userRepository.findByEmail(email) ?: throw CustomException(ResponseCode.USER_NOT_FOUND)
-        val response = mutableListOf<UserFollowingDto>()
 
+        val response = mutableListOf<UserFollowingDto>()
         followRepository.findAllFollower(pageable, user).forEach {
             response.add(UserFollowingDto(it))
         }
@@ -54,8 +58,8 @@ class FollowService(
 
     fun readAllFollowing(pageable: Pageable, email: String): MutableList<UserFollowingDto> {
         val user = userRepository.findByEmail(email) ?: throw CustomException(ResponseCode.USER_NOT_FOUND)
-        val response = mutableListOf<UserFollowingDto>()
 
+        val response = mutableListOf<UserFollowingDto>()
         followRepository.findAllFollowing(pageable, user).forEach {
             response.add(UserFollowingDto(it))
         }

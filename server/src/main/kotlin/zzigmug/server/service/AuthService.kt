@@ -23,18 +23,8 @@ class AuthService (
     fun emailJoin(requestDto: EmailJoinRequestDto): LoginResponseDto {
         if (userRepository.existsByEmail(requestDto.email)) throw CustomException(ResponseCode.EMAIL_DUPLICATED)
 
-        val user = User(
-            email = requestDto.email,
-            pw = passwordEncoder.encode(requestDto.password),
-            role = RoleType.ROLE_GUEST,
-            loginType = LoginType.EMAIL,
-            nickname = requestDto.nickname,
-            gender = requestDto.gender,
-            goal = requestDto.goal,
-            height = requestDto.height,
-            weight = requestDto.weight
-        )
-        userRepository.save(user)
+        requestDto.password = passwordEncoder.encode(requestDto.password)
+        val user = userRepository.save(User(requestDto))
 
         return LoginResponseDto(
             accessToken = createToken(user.email),
@@ -102,13 +92,17 @@ class AuthService (
     }
 
     @Transactional(readOnly = true)
-    fun validateNickname(input: String): ResponseCode {
+    fun validateNickname(input: String) {
         val nickname = input.replace(" ", "")
         val exp = Regex("^[가-힣ㄱ-ㅎ ㅏ-ㅣ a-zA-Z0-9 -]{2,12}\$")
-        if (!exp.matches(nickname)) return ResponseCode.NICKNAME_INCORRECT
 
-        if (userRepository.existsByNickname(nickname)) return ResponseCode.NICKNAME_DUPLICATED
-        return ResponseCode.OK
+        if (!exp.matches(nickname)) {
+            throw CustomException(ResponseCode.NICKNAME_INCORRECT)
+        }
+
+        if (userRepository.existsByNickname(nickname)) {
+            throw CustomException(ResponseCode.NICKNAME_DUPLICATED)
+        }
     }
 
     private fun createToken(email: String): String {

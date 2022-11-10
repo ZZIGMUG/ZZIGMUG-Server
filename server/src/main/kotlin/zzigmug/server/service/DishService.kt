@@ -23,12 +23,13 @@ class DishService(
         val food = foodRepository.findById(requestDto.foodId).orElseThrow {
             throw CustomException(ResponseCode.FOOD_NOT_FOUND)
         }
+
         val photo = photoRepository.findById(photoId).orElseThrow {
             throw CustomException(ResponseCode.PHOTO_NOT_FOUND)
         }
 
         val dish = Dish(photo = photo, food = food, amount = requestDto.amount)
-        photo.dishList.add(dish)
+        photo.addDish(dish)
         dishRepository.save(dish)
 
         return DishResponseDto(dish)
@@ -39,7 +40,8 @@ class DishService(
         val dish = dishRepository.findById(dishId).orElseThrow {
             throw CustomException(ResponseCode.DISH_NOT_FOUND)
         }
-        dish.amount = requestDto.amount
+
+        dish.updateAmount(requestDto.amount)
         dishRepository.save(dish)
     }
 

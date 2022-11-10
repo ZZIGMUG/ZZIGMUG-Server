@@ -22,4 +22,9 @@ class Photo (
 
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "photo")
     var dishList: MutableList<Dish> = mutableListOf()
-): BaseEntity()
+): BaseEntity() {
+
+    fun addDish(dish: Dish) {
+        this.dishList.add(dish)
+    }
+}

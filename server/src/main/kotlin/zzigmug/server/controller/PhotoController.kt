@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.data.domain.PageRequest
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -19,10 +20,9 @@ import zzigmug.server.data.NutrientResponseDto
 import zzigmug.server.data.PhotoRequestDto
 import zzigmug.server.data.PhotoResponseDto
 import zzigmug.server.service.PhotoService
-import zzigmug.server.utils.exception.ErrorResponse
+import zzigmug.server.utils.exception.ResponseCode
 import zzigmug.server.utils.exception.ResponseMessage
 import java.time.LocalDate
-import java.time.LocalDateTime
 import javax.servlet.http.HttpServletRequest
 
 @Tag(name = "photo", description = "음식 사진 API")
@@ -41,10 +41,11 @@ class PhotoController(
     fun extractFoodFromPhoto(
         @Parameter(description = "음식을 추출하고 싶은 사진 파일") @RequestPart(name = "image") image: MultipartFile,
         request: HttpServletRequest)
-    : ResponseEntity<Any> {
-        return ResponseEntity
-            .ok()
-            .body(photoService.extractDishesFromPhoto(image))
+    : ResponseEntity<ResponseMessage> {
+        return ResponseMessage.toResponseEntity(
+            ResponseCode.OK,
+            photoService.extractDishesFromPhoto(image)
+        )
     }
 
 
@@ -56,12 +57,13 @@ class PhotoController(
     @PostMapping("/save", consumes = [MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE])
     fun savePhoto(
         @Parameter(description = "사진 관련 정보") @RequestBody requestDto: PhotoRequestDto,
-        request: HttpServletRequest): ResponseEntity<Any> {
+        request: HttpServletRequest): ResponseEntity<ResponseMessage> {
         val userEmail = request.userPrincipal.name
 
-        return ResponseEntity
-            .ok()
-            .body(photoService.savePhoto(requestDto, userEmail))
+        return ResponseMessage.toResponseEntity(
+            ResponseCode.OK,
+            photoService.savePhoto(requestDto, userEmail)
+        )
     }
 
     @Operation(summary = "날짜로 사진 조회 API", description = "해당 날짜에 저장된 사진들을 모두 조회합니다.")
@@ -72,12 +74,13 @@ class PhotoController(
     @GetMapping
     fun readByDate(
         @Parameter(description = "조회할 날짜") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam date: LocalDate,
-        request: HttpServletRequest): ResponseEntity<Any> {
+        request: HttpServletRequest): ResponseEntity<ResponseMessage> {
         val userEmail = request.userPrincipal.name
 
-        return ResponseEntity
-            .ok()
-            .body(photoService.readPhotosByDate(date, userEmail))
+        return ResponseMessage.toResponseEntity(
+            ResponseCode.OK,
+            photoService.readPhotosByDate(date, userEmail)
+        )
     }
 
     @Operation(summary = "주간 칼로리 정보 조회 API", description = "파라미터에 입력한 날짜부터 해당 날짜의 7일 전까지 섭취한 칼로리 정보를 조회합니다.")
@@ -89,12 +92,13 @@ class PhotoController(
     fun readWeeklyCalories(
         @Parameter(description = "조회할 날짜") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam date: LocalDate,
         request: HttpServletRequest
-    ): ResponseEntity<Any> {
+    ): ResponseEntity<ResponseMessage> {
         val userEmail = request.userPrincipal.name
 
-        return ResponseEntity
-            .ok()
-            .body(photoService.getWeeklyCalories(userEmail, date))
+        return ResponseMessage.toResponseEntity(
+            ResponseCode.OK,
+            photoService.getWeeklyCalories(userEmail, date)
+        )
     }
 
     @Operation(summary = "오늘의 영양소 정보 조회 API", description = "date 파라미터에 입력한 날짜 하루 동안 섭취한 영양소 정보를 모두 조회합니다.")
@@ -106,12 +110,13 @@ class PhotoController(
     fun readNutrients(
         @Parameter(description = "조회할 날짜") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam date: LocalDate,
         request: HttpServletRequest
-    ): ResponseEntity<Any> {
+    ): ResponseEntity<ResponseMessage> {
         val userEmail = request.userPrincipal.name
 
-        return ResponseEntity
-            .ok()
-            .body(photoService.getNutrients(userEmail, date))
+        return ResponseMessage.toResponseEntity(
+            ResponseCode.OK,
+            photoService.getNutrients(userEmail, date)
+        )
     }
 
     @Operation(summary = "사진 삭제 API", description = "파라미터에 입력한 ID의 사진과 관련 데이터를 모두 삭제합니다.")
@@ -119,14 +124,12 @@ class PhotoController(
         ApiResponse(responseCode = "200", description = "성공", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ResponseMessage::class))))]),
         ApiResponse(responseCode = "404", description = "해당 ID의 사진 데이터를 찾을 수 없습니다.", content = [
-            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ErrorResponse::class))))]),
+            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ResponseMessage::class))))]),
     ])
     @DeleteMapping
-    fun deletePhoto(@Parameter(description = "삭제할 사진 ID") @RequestParam photoId: Long): ResponseEntity<Any> {
+    fun deletePhoto(@Parameter(description = "삭제할 사진 ID") @RequestParam photoId: Long): ResponseEntity<ResponseMessage> {
         photoService.deletePhoto(photoId)
 
-        return ResponseEntity
-            .ok()
-            .body(ResponseMessage(HttpStatus.OK.value(), "성공"))
+        return ResponseMessage.toResponseEntity(ResponseCode.OK)
     }
 }

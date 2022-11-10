@@ -3,7 +3,6 @@ package zzigmug.server.utils.exception
 import org.springframework.http.HttpStatus
 
 
-// TODO: ResponseTemplate 클래스 추가
 enum class ResponseCode(
     val httpStatus: HttpStatus,
     val message: String,
@@ -12,6 +11,8 @@ enum class ResponseCode(
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "계정이 존재하지 않습니다."),
     EMAIL_DUPLICATED(HttpStatus.CONFLICT, "중복된 이메일이 이미 존재합니다."),
+
+    NICKNAME_AVALIABLE(HttpStatus.OK, "사용 가능한 닉네임입니다."),
     NICKNAME_INCORRECT(HttpStatus.BAD_REQUEST, "닉네임 형식이 올바르지 않습니다."),
     NICKNAME_DUPLICATED(HttpStatus.CONFLICT, "중복된 닉네임이 이미 존재합니다."),
 
@@ -34,8 +35,3 @@ enum class ResponseCode(
     TOKEN_UNSUPPORTED(HttpStatus.UNAUTHORIZED, "Unsupported JWT token"),
     TOKEN_EMPTY(HttpStatus.UNAUTHORIZED, "JWT claims string is empty"),
 }
-
-data class ResponseMessage (
-    val status: Int,
-    val data: Any
-)

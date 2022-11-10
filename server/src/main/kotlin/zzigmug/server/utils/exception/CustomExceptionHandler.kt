@@ -8,7 +8,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 class CustomExceptionHandler: ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(value = [CustomException::class])
-    fun handleCustomException(e: CustomException): ResponseEntity<ErrorResponse> {
-        return ErrorResponse.toResponseEntity(e.errorCode)
+    fun handleCustomException(e: CustomException): ResponseEntity<ResponseMessage> {
+        return ResponseMessage.toResponseEntity(e.responseCode)
     }
 }

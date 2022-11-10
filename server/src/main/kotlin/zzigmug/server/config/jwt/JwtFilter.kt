@@ -1,15 +1,8 @@
 package zzigmug.server.config.jwt
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import io.jsonwebtoken.ExpiredJwtException
-import io.jsonwebtoken.MalformedJwtException
-import io.jsonwebtoken.UnsupportedJwtException
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.util.StringUtils
 import org.springframework.web.filter.OncePerRequestFilter
-import zzigmug.server.utils.exception.ErrorResponse
-import zzigmug.server.utils.exception.ResponseCode
-import java.security.SignatureException
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
