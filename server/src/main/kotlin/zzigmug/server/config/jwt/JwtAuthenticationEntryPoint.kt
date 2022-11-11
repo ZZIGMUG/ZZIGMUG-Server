@@ -19,8 +19,9 @@ class JwtAuthenticationEntryPoint: AuthenticationEntryPoint {
         authException: AuthenticationException?
     ) {
         val objectMapper = ObjectMapper()
-        response.contentType = "application/json"
         val jsonString = objectMapper.writeValueAsString(ResponseCode.TOKEN_INVALID)
+
+        response.contentType = "application/json"
         response.writer.print(jsonString)
         response.writer.flush()
     }

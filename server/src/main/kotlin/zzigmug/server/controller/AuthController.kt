@@ -103,10 +103,8 @@ class AuthController(
     ])
     @GetMapping("/check/nickname")
     fun checkNickname(@Parameter(description = "닉네임") @RequestParam nickname: String): ResponseEntity<ResponseMessage> {
-        authService.validateNickname(nickname)
+        val responseCode = authService.validateNickname(nickname)
 
-        return ResponseMessage.toResponseEntity(
-            ResponseCode.NICKNAME_AVALIABLE
-        )
+        return ResponseMessage.toResponseEntity(ResponseCode.NICKNAME_AVALIABLE)
     }
 }

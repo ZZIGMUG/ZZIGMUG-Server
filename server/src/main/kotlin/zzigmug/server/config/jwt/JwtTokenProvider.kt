@@ -15,22 +15,26 @@ class JwtTokenProvider(
     private val jwtProperty: JwtProperty,
     private val userDetailsService: UserDetailsService
 ) {
-    private var secretKey = ""
-    private var refreshKey = ""
+    private lateinit var secretKey: String
+    private lateinit var refreshKey: String
+    private lateinit var bearerPrefix: String
 
-    private val ONE_DAY: Long = 1000 * 60 * 60 * 24
-    private val ONE_WEEK: Long = ONE_DAY * 7
-    private val BEARER_PREFIX = "Bearer "
-    private val LOG = LoggerFactory.getLogger(JwtTokenProvider::class.java)
+    private val log = LoggerFactory.getLogger(JwtTokenProvider::class.java)
+
+    companion object {
+        private const val ONE_DAY = 1000L * 60 * 60 * 24
+        private const val ONE_WEEK = ONE_DAY * 7
+    }
 
     @PostConstruct
     fun init() {
         secretKey = Base64.getEncoder().encodeToString(jwtProperty.secret.toByteArray())
         refreshKey = Base64.getEncoder().encodeToString(jwtProperty.refresh.toByteArray())
+        bearerPrefix = Base64.getEncoder().encodeToString(jwtProperty.prefix.toByteArray())
     }
 
     fun getAccessToken(username: String, roles: Array<String>): String {
-        return BEARER_PREFIX + generate(username, ONE_DAY * 180, roles, secretKey)
+        return bearerPrefix + generate(username, ONE_DAY * 30, roles, secretKey)
     }
 
     fun validateAccessToken(accessToken: String?): Boolean {
@@ -38,7 +42,7 @@ class JwtTokenProvider(
     }
 
     fun getRefreshToken(username: String, roles: Array<String>): String {
-        return BEARER_PREFIX + generate(username, ONE_DAY * 180, roles, refreshKey)
+        return bearerPrefix + generate(username, ONE_WEEK * 8, roles, refreshKey)
     }
 
     fun validateRefreshToken(refreshToken: String?): Boolean {
@@ -63,25 +67,25 @@ class JwtTokenProvider(
             Jwts.parser().setSigningKey(signature).parseClaimsJws(token)
             return true
         } catch (e: SignatureException) {
-            LOG.error("Invalid JWT signature")
+            log.error("Invalid JWT signature")
         } catch (e: MalformedJwtException) {
-            LOG.error("Invalid JWT token")
+            log.error("Invalid JWT token")
         } catch (e: ExpiredJwtException) {
-            LOG.error("Expired JWT token")
+            log.error("Expired JWT token")
         } catch (e: UnsupportedJwtException) {
-            LOG.error("Unsupported JWT token")
+            log.error("Unsupported JWT token")
         } catch (e: IllegalArgumentException) {
-            LOG.error("JWT claims string is empty")
+            log.error("JWT claims string is empty")
         }
         return false
     }
 
     fun getAuthentication(accessToken: String): Authentication {
-        val userDetails = userDetailsService.loadUserByUsername(getEmail(accessToken))
+        val userDetails = userDetailsService.loadUserByUsername(extractEmailFromToken(accessToken))
         return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
     }
 
-    private fun getEmail(accessToken: String): String {
+    private fun extractEmailFromToken(accessToken: String): String {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(accessToken).body.subject
     }
 }
