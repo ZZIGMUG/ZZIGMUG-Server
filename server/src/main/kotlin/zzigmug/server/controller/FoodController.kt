@@ -71,8 +71,8 @@ class FoodController(
         ApiResponse(responseCode = "404", description = "해당 ID의 음식을 찾을 수 없습니다.", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ResponseMessage::class))))]),
     ])
-    @DeleteMapping
-    fun deleteFood(@Parameter(description = "음식 ID") @RequestParam foodId: Long): ResponseEntity<ResponseMessage> {
+    @DeleteMapping("/{foodId}")
+    fun deleteFood(@Parameter(description = "음식 ID") @PathVariable foodId: Long): ResponseEntity<ResponseMessage> {
         foodService.deleteFood(foodId)
 
         return ResponseMessage.toResponseEntity(ResponseCode.OK)

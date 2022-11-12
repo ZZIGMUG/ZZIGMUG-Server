@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -38,9 +39,11 @@ class FollowController(
         ApiResponse(responseCode = "401", description = "이미 상대방을 팔로우하고 있습니다.", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ResponseMessage::class))))]),
     ])
-    @PostMapping
-    fun followUser(@Parameter(description = "팔로우할 유저 ID") @RequestParam followingId: Long, request: HttpServletRequest): ResponseEntity<ResponseMessage> {
-        // TODO: 스스로 팔로우 금지하는 코드 추가
+    @PostMapping("/{followingId}")
+    fun followUser(
+        @Parameter(description = "팔로우할 유저 ID") @PathVariable followingId: Long,
+        request: HttpServletRequest
+    ): ResponseEntity<ResponseMessage> {
         val userEmail = request.userPrincipal.name
         followService.followUser(followingId, userEmail)
 
@@ -56,9 +59,9 @@ class FollowController(
         ApiResponse(responseCode = "404", description = "상대방을 팔로우하고 있지 않습니다.", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ResponseMessage::class))))]),
     ])
-    @DeleteMapping
+    @DeleteMapping("/{followingId}")
     fun unfollowUser(
-        @Parameter(description = "언팔로우할 유저 ID") @RequestParam followingId: Long,
+        @Parameter(description = "언팔로우할 유저 ID") @PathVariable followingId: Long,
         request: HttpServletRequest
     ): ResponseEntity<ResponseMessage> {
         val userEmail = request.userPrincipal.name

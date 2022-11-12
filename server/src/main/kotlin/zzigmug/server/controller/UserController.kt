@@ -11,14 +11,10 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import zzigmug.server.data.UserInfo
 import zzigmug.server.data.UserPage
+import zzigmug.server.data.UserUpdateRequestDto
 import zzigmug.server.service.UserService
 import zzigmug.server.utils.exception.ResponseCode
 import zzigmug.server.utils.exception.ResponseMessage
@@ -69,11 +65,11 @@ class UserController(
     ])
     @PatchMapping("/nickname")
     fun editNickname(
-        @Parameter(description = "새로운 닉네임") @RequestParam nickname: String,
+        @Parameter(description = "새로운 닉네임") @RequestBody requestDto: UserUpdateRequestDto,
         request: HttpServletRequest
     ): ResponseEntity<ResponseMessage> {
         val email = request.userPrincipal.name
-        userService.editNickname(email, nickname)
+        userService.editNickname(email, requestDto.nickname)
 
         return ResponseMessage.toResponseEntity(ResponseCode.OK)
     }

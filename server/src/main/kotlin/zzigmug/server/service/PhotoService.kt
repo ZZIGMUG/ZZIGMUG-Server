@@ -85,7 +85,7 @@ class PhotoService(
     }
 
     @Transactional(readOnly = true)
-    fun getWeeklyCalories(email: String, date: LocalDate): MutableList<CalorieResponseDto> {
+    fun readWeeklyCalories(email: String, date: LocalDate): MutableList<CalorieResponseDto> {
         val startDate = date.minusDays(6)
         val user = userRepository.findByEmail(email)?: throw CustomException(ResponseCode.USER_NOT_FOUND)
         val photos = photoRepository.findByUserAndDateBetween(user, startDate.atStartOfDay(), date.atTime(23, 59, 59))
@@ -145,7 +145,7 @@ class PhotoService(
     }
 
     @Transactional(readOnly = true)
-    fun getNutrients(email: String, date: LocalDate): NutrientResponseDto {
+    fun readNutrients(email: String, date: LocalDate): NutrientResponseDto {
         val user = userRepository.findByEmail(email)?: throw CustomException(ResponseCode.USER_NOT_FOUND)
         val photos = photoRepository.findByUserAndDateBetween(user, date.atStartOfDay(), date.atTime(23, 59, 59))
 

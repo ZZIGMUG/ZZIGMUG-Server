@@ -49,3 +49,7 @@ data class UserFollowingDto(
 ) {
     constructor(user: User): this(user.id, user.nickname, user.exp, user.numberOfDays)
 }
+
+data class UserUpdateRequestDto(
+    var nickname: String,
+)

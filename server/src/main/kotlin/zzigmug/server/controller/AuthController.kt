@@ -29,7 +29,9 @@ class AuthController(
         ApiResponse(responseCode = "409", description = "이미 같은 이름을 사용하는 유저가 존재합니다.", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ResponseMessage::class))))])])
     @PostMapping("/join/email")
-    fun emailJoin(@Parameter(description = "가입할 유저 정보") @RequestBody requestDto: EmailJoinRequestDto): ResponseEntity<ResponseMessage> {
+    fun emailJoin(
+        @Parameter(description = "가입할 유저 정보") @RequestBody requestDto: EmailJoinRequestDto
+    ): ResponseEntity<ResponseMessage> {
         return ResponseMessage.toResponseEntity(
             ResponseCode.OK,
             authService.emailJoin(requestDto)
@@ -43,7 +45,9 @@ class AuthController(
         ApiResponse(responseCode = "401", description = "이메일 또는 비밀번호를 틀렸습니다.", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ResponseMessage::class))))])])
     @PostMapping("/login/email")
-    fun emailLogin(@Parameter(description = "로그인할 유저 정보") @RequestBody requestDto: LoginRequestDto): ResponseEntity<ResponseMessage> {
+    fun emailLogin(
+        @Parameter(description = "로그인할 유저 정보") @RequestBody requestDto: LoginRequestDto
+    ): ResponseEntity<ResponseMessage> {
         return ResponseMessage.toResponseEntity(
             ResponseCode.OK,
             authService.emailLogin(requestDto)

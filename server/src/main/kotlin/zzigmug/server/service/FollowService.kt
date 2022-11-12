@@ -27,6 +27,10 @@ class FollowService(
             throw CustomException(ResponseCode.FOLLOW_DUPLICATED)
         }
 
+        if (user.id == followingUser.id) {
+            throw CustomException(ResponseCode.FOLLOW_BAD_REQUEST)
+        }
+
         followRepository.save(Follow(user, followingUser))
     }
 
