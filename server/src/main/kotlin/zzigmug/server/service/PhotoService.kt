@@ -73,83 +73,74 @@ class PhotoService(
     }
 
     @Transactional(readOnly = true)
-    fun readTodayPhotos(userId: String): MutableList<PhotoResponseDto> {
-        val user = userRepository.findByEmail(userId)?: throw CustomException(ResponseCode.USER_NOT_FOUND)
-        val date = LocalDate.now()
-        val response = mutableListOf<PhotoResponseDto>()
+    fun readWeeklyCalories(userEmail: String, endDay: LocalDate): MutableList<PhotoCalorieResponseDto> {
+        val user = userRepository.findByEmail(userEmail)
+            ?: throw CustomException(ResponseCode.USER_NOT_FOUND)
 
-        photoRepository.findByUserAndDateBetween(user, date.atStartOfDay(), date.atTime(23, 59, 59)).forEach {
-            response.add(PhotoResponseDto(it))
-        }
-        return response
-    }
+        val startDay = endDay.minusDays(6)
+        val photos = photoRepository.findByUserAndDateBetween(user, startDay.atStartOfDay(), endDay.atTime(23, 59, 59))
 
-    @Transactional(readOnly = true)
-    fun readWeeklyCalories(email: String, date: LocalDate): MutableList<CalorieResponseDto> {
-        val startDate = date.minusDays(6)
-        val user = userRepository.findByEmail(email)?: throw CustomException(ResponseCode.USER_NOT_FOUND)
-        val photos = photoRepository.findByUserAndDateBetween(user, startDate.atStartOfDay(), date.atTime(23, 59, 59))
+        val response = mutableListOf<PhotoCalorieResponseDto>()
 
-        val responseList = mutableListOf<CalorieResponseDto>()
-
-        var currentDate = startDate
-        var calories = .0
-        var breakfast = .0
-        var lunch = .0
-        var dinner = .0
+        var currentDay = startDay
+        var totalCalories = .0
+        var breakfastCalories = .0
+        var lunchCalories = .0
+        var dinnerCalories = .0
         var index = 0
 
-        loop@ while(!currentDate.isAfter(date)) {
-            if (photos[index].date!!.isAfter(currentDate.atTime(23, 59, 59))) {
-                responseList.add(CalorieResponseDto(currentDate, calories, breakfast, lunch, dinner))
+        loop@ while(!currentDay.isAfter(endDay)) {
+            val photoDate = photos[index].date!!
+            if (photoDate.isAfter(currentDay.atTime(23, 59, 59))) {
+                response.add(PhotoCalorieResponseDto(currentDay, totalCalories, breakfastCalories, lunchCalories, dinnerCalories))
 
-                currentDate = currentDate.plusDays(1)
-                calories = .0
-                breakfast = .0
-                lunch = .0
-                dinner = .0
+                currentDay = currentDay.plusDays(1)
+                totalCalories = .0
+                breakfastCalories = .0
+                lunchCalories = .0
+                dinnerCalories = .0
                 continue
             }
 
-            val isEqualDate = photos[index].date!!.isAfter(currentDate.atStartOfDay())
-                    && photos[index].date!!.isBefore(currentDate.atTime(23, 59, 59))
+            val isEqualDate = photoDate.isAfter(currentDay.atStartOfDay())
+                    && photoDate.isBefore(currentDay.atTime(23, 59, 59))
 
             while (isEqualDate) {
-                println(currentDate)
                 for (dish in photos[index].dishList) {
                     val calorie = dish.food.calories * dish.amount
-                    println(calorie)
 
                     when (photos[index].mealType) {
-                        MealType.BREAKFAST -> breakfast += calorie
-                        MealType.LUNCH -> lunch += calorie
-                        MealType.DINNER -> dinner += calorie
+                        MealType.BREAKFAST -> breakfastCalories += calorie
+                        MealType.LUNCH -> lunchCalories += calorie
+                        MealType.DINNER -> dinnerCalories += calorie
                     }
-                    calories += calorie
+                    totalCalories += calorie
                 }
 
                 if (++index >= photos.size) break@loop
             }
         }
 
-        while (!currentDate.isAfter(date)) {
-            responseList.add(CalorieResponseDto(currentDate, calories, breakfast, lunch, dinner))
-            currentDate = currentDate.plusDays(1)
-            calories = .0
-            breakfast = .0
-            lunch = .0
-            dinner = .0
+        while (!currentDay.isAfter(endDay)) {
+            response.add(PhotoCalorieResponseDto(currentDay, totalCalories, breakfastCalories, lunchCalories, dinnerCalories))
+            currentDay = currentDay.plusDays(1)
+            totalCalories = .0
+            breakfastCalories = .0
+            lunchCalories = .0
+            dinnerCalories = .0
         }
 
-        return responseList
+        return response
     }
 
     @Transactional(readOnly = true)
-    fun readNutrients(email: String, date: LocalDate): NutrientResponseDto {
-        val user = userRepository.findByEmail(email)?: throw CustomException(ResponseCode.USER_NOT_FOUND)
+    fun readNutrients(email: String, date: LocalDate): PhotoNutrientResponseDto {
+        val user = userRepository.findByEmail(email)
+            ?: throw CustomException(ResponseCode.USER_NOT_FOUND)
+
         val photos = photoRepository.findByUserAndDateBetween(user, date.atStartOfDay(), date.atTime(23, 59, 59))
 
-        val response = NutrientResponseDto(.0, .0, .0)
+        val response = PhotoNutrientResponseDto(.0, .0, .0)
         photos.forEach { photo ->
             photo.dishList.forEach { dish ->
                 response.carbohydrate += dish.food.carbohydrate
@@ -157,7 +148,6 @@ class PhotoService(
                 response.protein += dish.food.protein
             }
         }
-
         return response
     }
 

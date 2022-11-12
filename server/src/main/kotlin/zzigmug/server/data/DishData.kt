@@ -1,14 +1,13 @@
 package zzigmug.server.data
 
 import zzigmug.server.entity.Dish
-import java.time.LocalDate
 
 data class DishRequestDto (
     val foodId: Long,
     val amount: Double,
 )
 
-data class DishUpdateDto (
+data class DishUpdateRequestDto (
     val amount: Double,
 )
 
@@ -31,17 +30,3 @@ data class DishResponseDto (
         dish.food.fat * dish.amount
         )
 }
-
-data class CalorieResponseDto (
-    val date: LocalDate,
-    val totalCalorie: Double,
-    val breakfastCalorie: Double,
-    val lunchCalorie: Double,
-    val dinnerCalorie: Double,
-)
-
-data class NutrientResponseDto (
-    var carbohydrate: Double = 0.0,
-    var fat: Double = 0.0,
-    var protein: Double = 0.0,
-)

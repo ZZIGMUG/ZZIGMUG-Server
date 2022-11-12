@@ -34,7 +34,7 @@ class DishService(
     }
 
     @Transactional
-    fun editDishCount(dishId: Long, requestDto: DishUpdateDto) {
+    fun editDishCount(dishId: Long, requestDto: DishUpdateRequestDto) {
         val dish = dishRepository.findById(dishId).orElseThrow {
             throw CustomException(ResponseCode.DISH_NOT_FOUND)
         }

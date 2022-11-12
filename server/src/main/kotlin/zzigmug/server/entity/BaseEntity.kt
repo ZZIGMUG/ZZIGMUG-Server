@@ -20,19 +20,4 @@ abstract class BaseEntity {
 
     @LastModifiedDate
     lateinit var updateAt: LocalDateTime
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        val otherEntity = (other as BaseEntity) ?: return false
-        return this.id == otherEntity.id
-    }
-
-    override fun hashCode(): Int {
-        val prime = 59
-        val result = 1
-
-        return result * prime + (id?.hashCode() ?: 43)
-    }
-
 }

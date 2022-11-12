@@ -2,7 +2,7 @@ package zzigmug.server.entity
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
-import zzigmug.server.data.EmailJoinRequestDto
+import zzigmug.server.data.JoinEmailRequestDto
 import zzigmug.server.data.type.GenderType
 import zzigmug.server.data.type.LoginType
 import zzigmug.server.data.type.RoleType
@@ -54,7 +54,7 @@ class User(
 
     ): BaseEntity(), UserDetails {
 
-    constructor(requestDto: EmailJoinRequestDto) : this(
+    constructor(requestDto: JoinEmailRequestDto) : this(
         email = requestDto.email,
         pw = requestDto.password,
         role = RoleType.ROLE_GUEST,

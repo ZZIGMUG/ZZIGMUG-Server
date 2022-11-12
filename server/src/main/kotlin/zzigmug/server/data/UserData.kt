@@ -5,7 +5,11 @@ import zzigmug.server.data.type.LoginType
 import zzigmug.server.data.type.RoleType
 import zzigmug.server.entity.User
 
-data class UserInfo(
+data class UserUpdateRequestDto(
+    var nickname: String,
+)
+
+data class UserResponseDto(
     var id: Long?,
     var nickname: String?,
     var email: String,
@@ -35,13 +39,13 @@ data class UserInfo(
     )
 }
 
-data class UserPage(
+data class UserPageResponseDto(
     var totalCount: Long,
     var pageCount: Int,
-    var data: MutableList<UserInfo>
+    var data: MutableList<UserResponseDto>
 )
 
-data class UserFollowingDto(
+data class UserFollowingResponseDto(
     var id: Long?,
     var nickname: String?,
     var exp: Long,
@@ -49,7 +53,3 @@ data class UserFollowingDto(
 ) {
     constructor(user: User): this(user.id, user.nickname, user.exp, user.numberOfDays)
 }
-
-data class UserUpdateRequestDto(
-    var nickname: String,
-)

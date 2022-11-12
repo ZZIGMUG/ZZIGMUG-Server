@@ -9,12 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.domain.PageRequest
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import zzigmug.server.data.UserInfo
-import zzigmug.server.data.UserPage
-import zzigmug.server.data.UserUpdateRequestDto
+import zzigmug.server.data.*
 import zzigmug.server.service.UserService
 import zzigmug.server.utils.exception.ResponseCode
 import zzigmug.server.utils.exception.ResponseMessage
@@ -29,7 +26,7 @@ class UserController(
     @Operation(summary = "ID로 회원 조회 API", description = "ID로 회원을 조회합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "성공", content = [
-            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = UserInfo::class))))]),
+            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = UserResponseDto::class))))]),
         ApiResponse(responseCode = "404", description = "해당 ID의 유저를 찾을 수 없습니다.", content = [
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ResponseMessage::class))))]),
     ])
@@ -44,7 +41,7 @@ class UserController(
     @Operation(summary = "회원 리스트 조회 API", description = "키워드로 이메일과 닉네임을 검색해 회원 리스트를 조회합니다. (검색 키워드가 없을 시 전체 회원 리스트를 조회합니다.)")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "성공", content = [
-            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = UserPage::class))))]),
+            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = UserPageResponseDto::class))))]),
     ])
     @GetMapping("/list")
     fun searchUser(

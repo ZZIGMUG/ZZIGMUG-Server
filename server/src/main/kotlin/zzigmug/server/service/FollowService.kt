@@ -2,7 +2,7 @@ package zzigmug.server.service
 
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import zzigmug.server.data.UserFollowingDto
+import zzigmug.server.data.UserFollowingResponseDto
 import zzigmug.server.entity.Follow
 import zzigmug.server.repository.follow.FollowRepository
 import zzigmug.server.repository.user.UserRepository
@@ -48,22 +48,24 @@ class FollowService(
         followRepository.delete(follow)
     }
 
-    fun readAllFollower(pageable: Pageable, email: String): MutableList<UserFollowingDto> {
-        val user = userRepository.findByEmail(email) ?: throw CustomException(ResponseCode.USER_NOT_FOUND)
+    fun readAllFollower(pageable: Pageable, userEmail: String): MutableList<UserFollowingResponseDto> {
+        val user = userRepository.findByEmail(userEmail)
+            ?: throw CustomException(ResponseCode.USER_NOT_FOUND)
 
-        val response = mutableListOf<UserFollowingDto>()
+        val response = mutableListOf<UserFollowingResponseDto>()
         followRepository.findAllFollower(pageable, user).forEach {
-            response.add(UserFollowingDto(it))
+            response.add(UserFollowingResponseDto(it))
         }
         return response
     }
 
-    fun readAllFollowing(pageable: Pageable, email: String): MutableList<UserFollowingDto> {
-        val user = userRepository.findByEmail(email) ?: throw CustomException(ResponseCode.USER_NOT_FOUND)
+    fun readAllFollowing(pageable: Pageable, userEmail: String): MutableList<UserFollowingResponseDto> {
+        val user = userRepository.findByEmail(userEmail)
+            ?: throw CustomException(ResponseCode.USER_NOT_FOUND)
 
-        val response = mutableListOf<UserFollowingDto>()
+        val response = mutableListOf<UserFollowingResponseDto>()
         followRepository.findAllFollowing(pageable, user).forEach {
-            response.add(UserFollowingDto(it))
+            response.add(UserFollowingResponseDto(it))
         }
         return response
     }

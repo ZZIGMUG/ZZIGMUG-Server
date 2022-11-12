@@ -3,8 +3,8 @@ package zzigmug.server.service
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import zzigmug.server.data.UserInfo
-import zzigmug.server.data.UserPage
+import zzigmug.server.data.UserResponseDto
+import zzigmug.server.data.UserPageResponseDto
 import zzigmug.server.repository.user.UserRepository
 import zzigmug.server.utils.exception.CustomException
 import zzigmug.server.utils.exception.ResponseCode
@@ -16,37 +16,32 @@ class UserService(
 ) {
 
     @Transactional(readOnly = true)
-    fun readUserById(id: Long): UserInfo {
+    fun readUserById(id: Long): UserResponseDto {
         val user = userRepository.findById(id).orElseThrow {
             throw CustomException(ResponseCode.USER_NOT_FOUND)
         }
-
-        return UserInfo(user)
+        return UserResponseDto(user)
     }
 
     @Transactional(readOnly = true)
-    fun readAll(pageable: Pageable, keyword: String?): UserPage {
+    fun readAll(pageable: Pageable, keyword: String?): UserPageResponseDto {
         val pages = userRepository.findAllUserBySearch(pageable, keyword)
 
-        val userInfoList = mutableListOf<UserInfo>()
+        val userInfoList = mutableListOf<UserResponseDto>()
         pages.forEach {
-            userInfoList.add(UserInfo(it))
+            userInfoList.add(UserResponseDto(it))
         }
-
-        return UserPage(pages.totalElements, pages.totalPages, userInfoList)
+        return UserPageResponseDto(pages.totalElements, pages.totalPages, userInfoList)
     }
 
     @Transactional
-    fun editNickname(email: String, nickname: String): UserInfo {
-        if (authService.validateNickname(nickname) != ResponseCode.OK) {
-            throw CustomException(ResponseCode.NICKNAME_INCORRECT)
-        }
+    fun editNickname(userEmail: String, nickname: String): UserResponseDto {
+        authService.validateNickname(nickname)
 
-        val user = userRepository.findByEmail(email)
+        val user = userRepository.findByEmail(userEmail)
             ?: throw CustomException(ResponseCode.USER_NOT_FOUND)
-
         user.setNickname(nickname)
 
-        return UserInfo(userRepository.save(user))
+        return UserResponseDto(userRepository.save(user))
     }
 }

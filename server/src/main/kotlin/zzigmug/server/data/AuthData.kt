@@ -2,13 +2,19 @@ package zzigmug.server.data
 
 import zzigmug.server.data.type.GenderType
 
-data class KakaoLoginRequestDto (
+data class LoginRequestDto (
+    var email: String,
+    var password: String,
+)
+
+data class LoginKakaoRequestDto (
     var accessToken: String,
-        )
+)
+
 data class LoginResponseDto(
     var accessToken: String? = null,
     var refreshToken: String? = null,
-    var userInfo: UserInfo
+    var userInfo: UserResponseDto
 )
 
 data class JoinRequestDto (
@@ -20,7 +26,7 @@ data class JoinRequestDto (
     var gender: GenderType
 )
 
-data class EmailJoinRequestDto (
+data class JoinEmailRequestDto (
     var email: String,
     var password: String,
     var nickname: String,
@@ -28,9 +34,4 @@ data class EmailJoinRequestDto (
     var weight: Int,
     var goal: Int,
     var gender: GenderType,
-)
-
-data class LoginRequestDto (
-    var email: String,
-    var password: String,
 )

@@ -20,7 +20,7 @@ class AuthService (
     private val jwtTokenProvider: JwtTokenProvider,
     private val passwordEncoder: PasswordEncoder,
 ){
-    fun emailJoin(requestDto: EmailJoinRequestDto): LoginResponseDto {
+    fun emailJoin(requestDto: JoinEmailRequestDto): LoginResponseDto {
         if (userRepository.existsByEmail(requestDto.email)) throw CustomException(ResponseCode.USER_EMAIL_DUPLICATED)
 
         requestDto.password = passwordEncoder.encode(requestDto.password)
@@ -29,7 +29,7 @@ class AuthService (
         return LoginResponseDto(
             accessToken = createToken(user.email),
             refreshToken = null,
-            userInfo = UserInfo(user)
+            userInfo = UserResponseDto(user)
         )
     }
 
@@ -42,7 +42,7 @@ class AuthService (
         return LoginResponseDto(
             accessToken = createToken(user.email),
             refreshToken = null,
-            userInfo = UserInfo(user)
+            userInfo = UserResponseDto(user)
         )
     }
 
@@ -62,14 +62,14 @@ class AuthService (
             return LoginResponseDto(
                 accessToken = null,
                 refreshToken = null,
-                userInfo = UserInfo(newUser)
+                userInfo = UserResponseDto(newUser)
             )
         }
 
         return LoginResponseDto(
             accessToken = createToken(user.email),
             refreshToken = null,
-            userInfo = UserInfo(user)
+            userInfo = UserResponseDto(user)
         )
     }
 
@@ -87,13 +87,13 @@ class AuthService (
         return LoginResponseDto(
             accessToken = createToken(user.email),
             refreshToken = null,
-            userInfo = UserInfo(user)
+            userInfo = UserResponseDto(user)
         )
     }
 
     @Transactional(readOnly = true)
-    fun validateNickname(input: String) {
-        val nickname = input.replace(" ", "")
+    fun validateNickname(userInput: String) {
+        val nickname = userInput.replace(" ", "")
         val exp = Regex("^[가-힣ㄱ-ㅎ ㅏ-ㅣ a-zA-Z0-9 -]{2,12}\$")
 
         if (!exp.matches(nickname)) {
@@ -105,10 +105,10 @@ class AuthService (
         }
     }
 
-    private fun createToken(email: String): String {
+    private fun createToken(userEmail: String): String {
         val authorities = ArrayList<String>()
         authorities.add("ROLE_USER")
-        return jwtTokenProvider.getAccessToken(email, authorities.toTypedArray())
+        return jwtTokenProvider.getAccessToken(userEmail, authorities.toTypedArray())
     }
 
 

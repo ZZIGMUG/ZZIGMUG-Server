@@ -30,7 +30,7 @@ class AuthController(
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ResponseMessage::class))))])])
     @PostMapping("/join/email")
     fun emailJoin(
-        @Parameter(description = "가입할 유저 정보") @RequestBody requestDto: EmailJoinRequestDto
+        @Parameter(description = "가입할 유저 정보") @RequestBody requestDto: JoinEmailRequestDto
     ): ResponseEntity<ResponseMessage> {
         return ResponseMessage.toResponseEntity(
             ResponseCode.OK,
@@ -73,7 +73,7 @@ class AuthController(
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = LoginResponseDto::class))))]),
     ])
     @PostMapping("/join/kakao/token")
-    fun kakaoLogin(@RequestBody requestDto: KakaoLoginRequestDto): ResponseEntity<ResponseMessage> {
+    fun kakaoLogin(@RequestBody requestDto: LoginKakaoRequestDto): ResponseEntity<ResponseMessage> {
         return ResponseMessage.toResponseEntity(
             ResponseCode.OK,
             authService.kakaoLogin(requestDto.accessToken)

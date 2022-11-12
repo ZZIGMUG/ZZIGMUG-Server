@@ -25,8 +25,8 @@ class FoodService(
     }
 
     @Transactional
-    fun deleteFood(id: Long) {
-        val food = foodRepository.findById(id).orElseThrow {
+    fun deleteFood(foodId: Long) {
+        val food = foodRepository.findById(foodId).orElseThrow {
             throw CustomException(ResponseCode.FOOD_NOT_FOUND)
         }
         foodRepository.delete(food)

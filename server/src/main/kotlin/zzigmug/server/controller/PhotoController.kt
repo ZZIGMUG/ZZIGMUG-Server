@@ -92,7 +92,7 @@ class PhotoController(
     @PatchMapping("/dish/{dishId}")
     fun editDishCount(
         @Parameter(description = "수정할 식사 ID") @PathVariable dishId: Long,
-        @Parameter(description = "수정할 식사 정보") @RequestBody requestDto: DishUpdateDto
+        @Parameter(description = "수정할 식사 정보") @RequestBody requestDto: DishUpdateRequestDto
     ): ResponseEntity<ResponseMessage> {
         dishService.editDishCount(dishId, requestDto)
 
@@ -133,7 +133,7 @@ class PhotoController(
     @Operation(summary = "주간 칼로리 정보 조회 API", description = "파라미터에 입력한 날짜부터 해당 날짜의 7일 전까지 섭취한 칼로리 정보를 조회합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "성공", content = [
-            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = CalorieResponseDto::class))))]),
+            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = PhotoCalorieResponseDto::class))))]),
     ])
     @GetMapping("/week/calorie")
     fun readWeeklyCalories(
@@ -151,7 +151,7 @@ class PhotoController(
     @Operation(summary = "오늘의 영양소 정보 조회 API", description = "date 파라미터에 입력한 날짜 하루 동안 섭취한 영양소 정보를 모두 조회합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "성공", content = [
-            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = NutrientResponseDto::class))))]),
+            Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = PhotoNutrientResponseDto::class))))]),
     ])
     @GetMapping("/nutrient")
     fun readNutrients(

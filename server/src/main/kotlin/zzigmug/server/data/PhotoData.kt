@@ -1,19 +1,15 @@
 package zzigmug.server.data
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import org.springframework.format.annotation.DateTimeFormat
 import zzigmug.server.data.type.MealType
 import zzigmug.server.entity.Photo
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class PhotoRequestDto (
     val id: Long,
     val date: LocalDateTime,
     val mealType: MealType,
-)
-
-data class ExtractResponseDto (
-    val foodList: List<String>
 )
 
 data class PhotoResponseDto (
@@ -30,3 +26,17 @@ data class PhotoResponseDto (
         }
     }
 }
+
+data class PhotoCalorieResponseDto (
+    val date: LocalDate,
+    val totalCalorie: Double,
+    val breakfastCalorie: Double,
+    val lunchCalorie: Double,
+    val dinnerCalorie: Double,
+)
+
+data class PhotoNutrientResponseDto (
+    var carbohydrate: Double = 0.0,
+    var fat: Double = 0.0,
+    var protein: Double = 0.0,
+)
