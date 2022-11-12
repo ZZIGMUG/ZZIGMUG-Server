@@ -2,8 +2,6 @@ package zzigmug.server.config
 
 import org.springframework.beans.factory.annotation.Configurable
 import org.springframework.context.annotation.Bean
-import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
@@ -15,7 +13,6 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import zzigmug.server.config.jwt.*
-import java.util.*
 
 @Configurable
 @EnableWebSecurity
@@ -27,12 +24,6 @@ class SecurityConfig(
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder()
-
-    @Bean
-    @Throws(Exception::class)
-    override fun authenticationManagerBean(): AuthenticationManager {
-        return super.authenticationManagerBean()
-    }
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
@@ -73,14 +64,10 @@ class SecurityConfig(
         .and()
             .authorizeRequests()
             .anyRequest()
-            .permitAll()
-            //.authenticated()
+            .authenticated()
         .and()
             .addFilterBefore(JwtFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter::class.java)
     }
-
-    @Throws(Exception::class)
-    override fun configure(auth: AuthenticationManagerBuilder?) {}
 
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {

@@ -85,7 +85,7 @@ class AuthController(
         ),
     ])
     @PostMapping("/join/kakao")
-    fun join(@RequestBody requestDto: JoinRequestDto): ResponseEntity<ResponseMessage> {
+    fun kakaoJoin(@RequestBody requestDto: JoinRequestDto): ResponseEntity<ResponseMessage> {
         return ResponseMessage.toResponseEntity(
             ResponseCode.OK,
             authService.kakaoJoin(requestDto)
@@ -102,7 +102,7 @@ class AuthController(
             Content(mediaType = "application/json", array = (ArraySchema(schema = Schema(implementation = ResponseMessage::class))))])
     ])
     @GetMapping("/check/nickname")
-    fun checkNickname(@Parameter(description = "닉네임") @RequestParam nickname: String): ResponseEntity<ResponseMessage> {
+    fun validateNickname(@Parameter(description = "닉네임") @RequestParam nickname: String): ResponseEntity<ResponseMessage> {
         val responseCode = authService.validateNickname(nickname)
 
         return ResponseMessage.toResponseEntity(ResponseCode.NICKNAME_AVALIABLE)

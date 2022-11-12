@@ -7,10 +7,8 @@ import zzigmug.server.entity.Dish
 import zzigmug.server.repository.dish.DishRepository
 import zzigmug.server.repository.food.FoodRepository
 import zzigmug.server.repository.PhotoRepository
-import zzigmug.server.repository.user.UserRepository
 import zzigmug.server.utils.exception.CustomException
 import zzigmug.server.utils.exception.ResponseCode
-import java.time.LocalDate
 
 @Service
 class DishService(
@@ -19,7 +17,7 @@ class DishService(
     private val foodRepository: FoodRepository,
 ) {
     @Transactional
-    fun saveDish(photoId: Long, requestDto: DishRequestDto): DishResponseDto {
+    fun createDish(photoId: Long, requestDto: DishRequestDto): DishResponseDto {
         val food = foodRepository.findById(requestDto.foodId).orElseThrow {
             throw CustomException(ResponseCode.FOOD_NOT_FOUND)
         }

@@ -6,18 +6,16 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Component
+import org.springframework.util.StringUtils
 import zzigmug.server.data.property.JwtProperty
 import java.util.*
-import javax.annotation.PostConstruct
+import javax.servlet.http.HttpServletRequest
 
 @Component
 class JwtTokenProvider(
     private val jwtProperty: JwtProperty,
     private val userDetailsService: UserDetailsService
 ) {
-    private lateinit var secretKey: String
-    private lateinit var refreshKey: String
-    private lateinit var bearerPrefix: String
 
     private val log = LoggerFactory.getLogger(JwtTokenProvider::class.java)
 
@@ -26,27 +24,20 @@ class JwtTokenProvider(
         private const val ONE_WEEK = ONE_DAY * 7
     }
 
-    @PostConstruct
-    fun init() {
-        secretKey = Base64.getEncoder().encodeToString(jwtProperty.secret.toByteArray())
-        refreshKey = Base64.getEncoder().encodeToString(jwtProperty.refresh.toByteArray())
-        bearerPrefix = Base64.getEncoder().encodeToString(jwtProperty.prefix.toByteArray())
-    }
-
     fun getAccessToken(username: String, roles: Array<String>): String {
-        return bearerPrefix + generate(username, ONE_DAY * 30, roles, secretKey)
-    }
-
-    fun validateAccessToken(accessToken: String?): Boolean {
-        return validate(secretKey, accessToken)
+        return jwtProperty.bearerPrefix + generate(username, ONE_DAY * 30, roles, jwtProperty.secretKey)
     }
 
     fun getRefreshToken(username: String, roles: Array<String>): String {
-        return bearerPrefix + generate(username, ONE_WEEK * 8, roles, refreshKey)
+        return jwtProperty.bearerPrefix + generate(username, ONE_WEEK * 8, roles, jwtProperty.refreshKey)
+    }
+
+    fun validateAccessToken(accessToken: String?): Boolean {
+        return validate(jwtProperty.secretKey, accessToken)
     }
 
     fun validateRefreshToken(refreshToken: String?): Boolean {
-        return validate(refreshKey, refreshToken)
+        return validate(jwtProperty.refreshKey, refreshToken)
     }
 
     private fun generate(username: String, expirationInMillis: Long, roles: Array<String>, signature: String): String {
@@ -86,6 +77,14 @@ class JwtTokenProvider(
     }
 
     private fun extractEmailFromToken(accessToken: String): String {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(accessToken).body.subject
+        return Jwts.parser().setSigningKey(jwtProperty.secretKey).parseClaimsJws(accessToken).body.subject
+    }
+
+    fun resolveToken(request: HttpServletRequest): String? {
+        val bearerToken = request.getHeader(jwtProperty.authorizationHeader)
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(jwtProperty.bearerPrefix)) {
+            return bearerToken.substring(7)
+        }
+        return null
     }
 }

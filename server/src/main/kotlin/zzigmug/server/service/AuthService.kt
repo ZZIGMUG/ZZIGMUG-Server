@@ -21,7 +21,7 @@ class AuthService (
     private val passwordEncoder: PasswordEncoder,
 ){
     fun emailJoin(requestDto: EmailJoinRequestDto): LoginResponseDto {
-        if (userRepository.existsByEmail(requestDto.email)) throw CustomException(ResponseCode.EMAIL_DUPLICATED)
+        if (userRepository.existsByEmail(requestDto.email)) throw CustomException(ResponseCode.USER_EMAIL_DUPLICATED)
 
         requestDto.password = passwordEncoder.encode(requestDto.password)
         val user = userRepository.save(User(requestDto))

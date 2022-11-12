@@ -1,7 +1,6 @@
 package zzigmug.server.service
 
 import org.springframework.data.domain.Pageable
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import zzigmug.server.data.UserFollowingDto
 import zzigmug.server.entity.Follow
@@ -9,7 +8,6 @@ import zzigmug.server.repository.follow.FollowRepository
 import zzigmug.server.repository.user.UserRepository
 import zzigmug.server.utils.exception.CustomException
 import zzigmug.server.utils.exception.ResponseCode
-import zzigmug.server.utils.exception.ResponseMessage
 
 @Service
 class FollowService(
@@ -26,7 +24,7 @@ class FollowService(
         }
 
         if (followRepository.existsByFollowerAndFollowing(user, followingUser)) {
-            throw CustomException(ResponseCode.ALREADY_FOLLOWING)
+            throw CustomException(ResponseCode.FOLLOW_DUPLICATED)
         }
 
         followRepository.save(Follow(user, followingUser))

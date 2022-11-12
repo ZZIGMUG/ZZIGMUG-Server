@@ -55,7 +55,7 @@ class PhotoService(
 
         responseEntity.body!!.forEach {
             val food = foodRepository.findByEnglishName(it) ?: foodRepository.save(Food(it, it, 0, 0.0, 0.0, 0.0))
-            dishService.saveDish(photo.id!!, DishRequestDto(food.id!!, 1.0))
+            dishService.createDish(photo.id!!, DishRequestDto(food.id!!, 1.0))
         }
 
         return PhotoResponseDto(photo)

@@ -36,6 +36,7 @@ class UserService(
         return UserPage(pages.totalElements, pages.totalPages, userInfoList)
     }
 
+    @Transactional
     fun editNickname(email: String, nickname: String): UserInfo {
         if (authService.validateNickname(nickname) != ResponseCode.OK) {
             throw CustomException(ResponseCode.NICKNAME_INCORRECT)
