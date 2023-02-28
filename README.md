@@ -28,8 +28,9 @@ ZZIGMUG은 음식 이미지 추출을 통해 사용자가 섭취한 칼로리와
 
 ## 사용기술
 
-- Kotlin, Spring Boot, Spring Data JPA, Spring Security, Querydsl, MySQL, YOLOv5, FastAPI
-- Docker, AWS EC2, AWS RDS, AWS S3, GitHub Action
+- `Kotlin`, `Spring Boot`, `Spring Data JPA`, `Spring Security`, `Querydsl`, `MySQL` 
+- `YOLOv5`, `FastAPI`
+- `Docker`, `AWS EC2`, `AWS RDS`, `AWS S3`, `GitHub Action`
 
 <br>
 
@@ -37,8 +38,8 @@ ZZIGMUG은 음식 이미지 추출을 통해 사용자가 섭취한 칼로리와
 
 <img src="https://github.com/ZZIGMUG/ZZIGMUG-Server/blob/main/images/zzigmug_erd.png" alt="zzigmug-erd" border="0"/>
 
-- User: 사용자 정보를 관리합니다.
-- Follow: 사용자 간의 팔로잉/팔로우 정보를 저장합니다.
-- Food: 추출할 수 있는 음식 종류 정보를 관리합니다. (음식 이름, 칼로리, 영양소 데이터)
-- Meal: 사용자가 촬영한 음식 사진의 정보를 관리합니다. (이미지 URL, 촬영일시)
-- Dish: Meal의 음식 이미지에서 추출된 음식 정보를 관리합니다. (섭취량 등)
+- `User`: 사용자 정보를 관리합니다.
+- `Follow`: 사용자 간의 팔로잉/팔로우 정보를 저장합니다.
+- `Food`: 추출할 수 있는 음식 종류 정보를 관리합니다. (음식 이름, 칼로리, 영양소 데이터)
+- `Meal`: 사용자가 촬영한 음식 사진의 정보를 관리합니다. (이미지 URL, 촬영일시)
+- `Dish`: Meal의 음식 이미지에서 추출된 음식 정보를 관리합니다. (섭취량 등)
